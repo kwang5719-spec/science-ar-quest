@@ -1,0 +1,276 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+  <meta name="theme-color" content="#061516">
+  <title>Science AR Quest — ภารกิจชีววิทยา</title>
+
+  <script src="https://aframe.io/releases/1.6.0/aframe.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
+
+  <style>
+    *{box-sizing:border-box}
+    html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#000;
+      font-family:system-ui,-apple-system,"Noto Sans Thai",sans-serif}
+
+    video{position:fixed!important;inset:0!important;width:100vw!important;height:100vh!important;
+      object-fit:cover!important;display:block!important;visibility:visible!important;opacity:1!important;
+      z-index:0!important;background:#000!important}
+    a-scene,.a-canvas,canvas{position:fixed!important;inset:0!important;width:100vw!important;height:100vh!important;
+      z-index:1!important;background:transparent!important}
+
+    .screen{position:fixed;inset:0;z-index:40;display:flex;align-items:center;justify-content:center;padding:20px;
+      background:radial-gradient(circle at 50% 22%,#173f35,#061516 68%)}
+    .card{width:min(92vw,560px);padding:26px 22px;border-radius:24px;background:#0b2524f2;border:1px solid #7dff91;
+      color:#fff;text-align:center;box-shadow:0 0 40px #56ff7a2b}
+    h1{margin:.2em 0;font-size:clamp(30px,8vw,48px)}
+    h2{margin:.2em 0;color:#b7ff62}
+    p{line-height:1.55;color:#e6f4ee}
+    .btn{border:0;border-radius:999px;padding:13px 22px;font-size:17px;font-weight:800;background:#b7ff37;
+      color:#09200d;cursor:pointer;margin:5px}
+    .btn.secondary{background:#173f35;color:#fff;border:1px solid #78d990}
+    .btn:disabled{opacity:.38;cursor:not-allowed}
+
+    #hud{display:none;position:fixed;z-index:25;left:12px;right:12px;top:max(12px,env(safe-area-inset-top));pointer-events:none}
+    #status{margin:auto;max-width:640px;background:#061516df;color:#fff;border:1px solid #8cff76;border-radius:18px;
+      padding:11px 14px;text-align:center;backdrop-filter:blur(6px)}
+    .ok{color:#b7ff62;font-weight:800}.small{font-size:13px;opacity:.88}
+
+    #missionPanel{display:none;position:fixed;z-index:30;left:14px;right:14px;bottom:max(16px,env(safe-area-inset-bottom));
+      margin:auto;max-width:680px;background:#071b1af2;color:#fff;border:1px solid #77ef8b;border-radius:22px;padding:15px;
+      backdrop-filter:blur(8px);max-height:56vh;overflow:auto}
+    #missionPanel h3{margin:0 0 6px;color:#b7ff62}
+    .clueGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:10px 0}
+    .clue{padding:11px 8px;border-radius:14px;border:1px solid #4b8366;background:#12342f;color:#fff;font-weight:700}
+    .clue.done{background:#244d27;border-color:#b7ff62;color:#dfffbd}
+    #clueText{min-height:52px;padding:10px;border-radius:14px;background:#0e2926;margin-top:8px;line-height:1.45}
+    #question{display:none;margin-top:10px;padding-top:10px;border-top:1px solid #335f50}
+    .answer{width:100%;text-align:left;padding:11px 12px;margin:5px 0;border-radius:12px;border:1px solid #406d5e;
+      background:#14332e;color:#fff;font-size:15px}
+    .answer.correct{border-color:#b7ff62;background:#254d29}
+    .answer.wrong{border-color:#ff8c8c;background:#4b2020}
+    #feedback{min-height:28px;margin-top:6px;font-weight:700}
+
+    #success{display:none;position:fixed;inset:0;z-index:50;align-items:center;justify-content:center;padding:20px;
+      background:rgba(2,13,12,.92)}
+    .fragment{font-size:72px;filter:drop-shadow(0 0 24px #b7ff62)}
+    .progress{margin:12px auto;padding:10px 14px;border-radius:14px;background:#0c2923;border:1px solid #4f8d71;
+      font-weight:800}
+
+    #map{display:none;position:fixed;inset:0;z-index:55;align-items:center;justify-content:center;padding:20px;background:#061516f7}
+    .missionList{text-align:left;margin:14px auto 0;max-width:430px}
+    .missionRow{display:flex;justify-content:space-between;gap:12px;padding:11px 12px;margin:7px 0;border-radius:14px;background:#102824}
+    .complete{color:#b7ff62}
+
+    #scanHint{display:none;position:fixed;z-index:20;left:50%;top:52%;transform:translate(-50%,-50%);
+      width:min(72vw,460px);aspect-ratio:.71;border:3px solid rgba(255,255,255,.75);border-radius:18px;pointer-events:none}
+  </style>
+</head>
+<body>
+
+<div id="start" class="screen">
+  <div class="card">
+    <div>🔬 SCIENCE AR QUEST</div>
+    <h1>ภารกิจชีววิทยา</h1>
+    <h2>เซลล์ปริศนา 🧬</h2>
+    <p>ตามหาหลักฐาน 3 อย่างจากเซลล์ปริศนา แล้ววิเคราะห์ว่าเป็นเซลล์ชนิดใด เพื่อกู้คืน “ชิ้นส่วนแห่งชีวิต”</p>
+    <button class="btn" id="startBtn">เริ่มภารกิจ</button>
+    <button class="btn secondary" id="mapBtnStart">ดูแผนที่ภารกิจ</button>
+  </div>
+</div>
+
+<div id="hud"><div id="status"><span class="ok">กำลังเปิดกล้อง…</span><br><span class="small">กรุณารอสักครู่</span></div></div>
+<div id="scanHint"></div>
+
+<div id="missionPanel">
+  <h3>🔍 ค้นหาเบาะแส 3 จุด</h3>
+  <div class="small">แตะสำรวจส่วนสำคัญของเซลล์ทีละจุด</div>
+  <div class="clueGrid">
+    <button class="clue" data-clue="1">เบาะแส 1</button>
+    <button class="clue" data-clue="2">เบาะแส 2</button>
+    <button class="clue" data-clue="3">เบาะแส 3</button>
+  </div>
+  <div id="clueText">เลือกเบาะแสเพื่อเริ่มสำรวจ</div>
+
+  <div id="question">
+    <h3>🧠 วิเคราะห์ตัวอย่าง</h3>
+    <div>จากหลักฐานทั้งหมด เซลล์ปริศนานี้น่าจะเป็นเซลล์ชนิดใดมากที่สุด?</div>
+    <button class="answer" data-answer="bacteria">🦠 เซลล์แบคทีเรีย</button>
+    <button class="answer" data-answer="plant">🌿 เซลล์พืช</button>
+    <button class="answer" data-answer="animal">🐾 เซลล์สัตว์</button>
+    <button class="answer" data-answer="fungus">🍄 เซลล์รา</button>
+    <div id="feedback"></div>
+  </div>
+</div>
+
+<div id="success">
+  <div class="card">
+    <div class="fragment">💎</div>
+    <h1>วิเคราะห์สำเร็จ!</h1>
+    <h2>ได้รับชิ้นส่วนแห่งชีวิต</h2>
+    <p><b>LIFE FRAGMENT</b></p>
+    <div class="progress">ความคืบหน้า Science Core: <span id="progressText">1 / 5</span></div>
+    <p class="small">ระบบได้บันทึกภารกิจชีววิทยาไว้ในอุปกรณ์นี้แล้ว</p>
+    <button class="btn" id="mapBtnSuccess">ดูแผนที่ภารกิจ</button>
+    <button class="btn secondary" id="closeSuccess">กลับไปที่กล้อง</button>
+  </div>
+</div>
+
+<div id="map" style="display:none!important">
+  <div class="card">
+    <h1>แผนที่ภารกิจ</h1>
+    <p>รวบรวมชิ้นส่วนให้ครบทั้ง 5 ภาควิชา</p>
+    <div class="missionList">
+      <div class="missionRow"><span>🔬 วิทยาศาสตร์ ม.ต้น</span><span>🔒</span></div>
+      <div class="missionRow"><span>🧬 ชีววิทยา</span><span id="bioMapStatus">ยังไม่ผ่าน</span></div>
+      <div class="missionRow"><span>⚡ ฟิสิกส์</span><span>🔒</span></div>
+      <div class="missionRow"><span>⚗️ เคมี</span><span>🔒</span></div>
+      <div class="missionRow"><span>🌎 โลกและดาราศาสตร์</span><span>🔒</span></div>
+    </div>
+    <button class="btn" id="backFromMap">กลับ</button>
+    <button class="btn secondary" id="resetProgress">รีเซ็ตการทดสอบ</button>
+  </div>
+</div>
+
+<a-scene id="scene"
+  mindar-image="imageTargetSrc: ./targets.mind; autoStart:false; uiLoading:no; uiScanning:no; uiError:no; filterMinCF:0.001; filterBeta:0.01;"
+  color-space="sRGB"
+  renderer="alpha:true;colorManagement:true;physicallyCorrectLights:true"
+  vr-mode-ui="enabled:false"
+  device-orientation-permission-ui="enabled:false"
+  embedded>
+
+  <a-camera position="0 0 0" look-controls="enabled:false"></a-camera>
+
+  <a-entity id="target" mindar-image-target="targetIndex:0">
+    <a-ring position="0 0 0.08" radius-inner="0.28" radius-outer="0.31" color="#B7FF37"
+      animation="property:rotation;to:0 0 360;loop:true;dur:4500;easing:linear"></a-ring>
+    <a-circle position="0 0 0.075" radius="0.21" color="#123f33" opacity="0.80"></a-circle>
+    <a-text value="MYSTERY\nCELL" align="center" color="#FFFFFF" width="1.15" position="0 0.025 0.09"></a-text>
+    <a-sphere radius="0.05" position="0 -0.17 0.11" color="#B7FF37"
+      animation="property:scale;to:1.5 1.5 1.5;dir:alternate;loop:true;dur:650"></a-sphere>
+  </a-entity>
+</a-scene>
+
+<script>
+const $=s=>document.querySelector(s);
+const scene=$('#scene'), target=$('#target'), hud=$('#hud'), status=$('#status'), scanHint=$('#scanHint');
+const start=$('#start'), missionPanel=$('#missionPanel'), success=$('#success'), map=$('#map');
+const clueText=$('#clueText'), question=$('#question'), feedback=$('#feedback');
+let foundTarget=false;
+let clues=new Set();
+
+function setStatus(main,sub=''){status.innerHTML=`<span class="ok">${main}</span>${sub?`<br><span class="small">${sub}</span>`:''}`}
+
+function updateMap(){
+  const done=localStorage.getItem('scienceAR_biology')==='complete';
+  const el=$('#bioMapStatus');
+  el.textContent=done?'✓ ผ่านแล้ว':'ยังไม่ผ่าน';
+  el.className=done?'complete':'';
+  $('#progressText').textContent=done?'1 / 5':'0 / 5';
+}
+
+async function forceVideo(){
+  for(let i=0;i<35;i++){
+    const v=document.querySelector('video');
+    if(v){
+      v.setAttribute('playsinline','');v.setAttribute('webkit-playsinline','');v.muted=true;
+      Object.assign(v.style,{position:'fixed',inset:'0',width:'100vw',height:'100vh',objectFit:'cover',
+        display:'block',visibility:'visible',opacity:'1',zIndex:'0'});
+      return true;
+    }
+    await new Promise(r=>setTimeout(r,180));
+  }
+  return false;
+}
+
+$('#startBtn').addEventListener('click',async()=>{
+  start.style.display='none';hud.style.display='block';scanHint.style.display='block';
+  setStatus('กำลังเปิดกล้อง…','กรุณารอสักครู่');
+  try{
+    await scene.systems['mindar-image-system'].start();
+    await forceVideo();
+    setStatus('กล้องพร้อมใช้งาน ✓','หันกล้องไปยังโปสเตอร์ชีววิทยา');
+  }catch(e){
+    setStatus('เปิดกล้องไม่สำเร็จ','ตรวจสอบสิทธิ์การใช้กล้อง');
+  }
+});
+
+target.addEventListener('targetFound',()=>{
+  foundTarget=true;scanHint.style.display='none';
+  setStatus('✓ พบโปสเตอร์ชีววิทยา','เริ่มค้นหาเบาะแสได้เลย');
+  missionPanel.style.display='block';
+});
+target.addEventListener('targetLost',()=>{
+  foundTarget=false;
+  if(success.style.display!=='flex' && map.style.display!=='flex'){
+    setStatus('หลุดจากโปสเตอร์','หันกล้องกลับไปยังโปสเตอร์');
+    scanHint.style.display='block';
+  }
+});
+
+const clueData={
+  1:'🔎 เบาะแสที่ 1: พบสารพันธุกรรมอยู่ภายใน “นิวเคลียส” แสดงว่าเป็นเซลล์ยูคาริโอต',
+  2:'🔎 เบาะแสที่ 2: พบ “ผนังเซลล์” อยู่ด้านนอกเยื่อหุ้มเซลล์ ช่วยคงรูปร่างและเพิ่มความแข็งแรง',
+  3:'🔎 เบาะแสที่ 3: พบ “คลอโรพลาสต์” ซึ่งมีรงควัตถุที่ช่วยรับพลังงานแสงเพื่อใช้ในการสังเคราะห์ด้วยแสง'
+};
+
+document.querySelectorAll('.clue').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    const n=btn.dataset.clue;
+    clues.add(n);btn.classList.add('done');btn.textContent=`✓ เบาะแส ${n}`;
+    clueText.textContent=clueData[n];
+    if(clues.size===3){
+      question.style.display='block';
+      clueText.textContent+='  •  คุณพบเบาะแสครบแล้ว สามารถวิเคราะห์ตัวอย่างได้';
+    }
+  });
+});
+
+document.querySelectorAll('.answer').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('.answer').forEach(b=>b.classList.remove('wrong','correct'));
+    if(btn.dataset.answer==='plant'){
+      btn.classList.add('correct');
+      feedback.style.color='#b7ff62';
+      feedback.textContent='✓ ถูกต้อง! นิวเคลียส + ผนังเซลล์ + คลอโรพลาสต์ สอดคล้องกับเซลล์พืช';
+      localStorage.setItem('scienceAR_biology','complete');
+      updateMap();
+      setTimeout(()=>{missionPanel.style.display='none';success.style.display='flex'},650);
+    }else{
+      btn.classList.add('wrong');
+      feedback.style.color='#ff9b9b';
+      if(btn.dataset.answer==='fungus'){
+        feedback.textContent='ยังไม่ถูก — เซลล์รามีผนังเซลล์ แต่โดยทั่วไปไม่มีคลอโรพลาสต์ ลองพิจารณาเบาะแสที่ 3';
+      }else if(btn.dataset.answer==='animal'){
+        feedback.textContent='ยังไม่ถูก — เซลล์สัตว์ไม่มีผนังเซลล์และไม่มีคลอโรพลาสต์';
+      }else{
+        feedback.textContent='ยังไม่ถูก — แบคทีเรียไม่มีนิวเคลียสที่มีเยื่อหุ้ม ลองพิจารณาเบาะแสที่ 1';
+      }
+    }
+  });
+});
+
+function openMap(){ window.location.href='./mission-map.html'; }
+$('#mapBtnStart').addEventListener('click',openMap);
+$('#mapBtnSuccess').addEventListener('click',openMap);
+$('#closeSuccess').addEventListener('click',()=>{success.style.display='none';if(foundTarget)missionPanel.style.display='block'});
+$('#backFromMap').addEventListener('click',()=>{
+  map.style.display='none';
+  if(document.querySelector('video')) {
+    if(foundTarget) missionPanel.style.display='block';
+  } else start.style.display='flex';
+});
+$('#resetProgress').addEventListener('click',()=>{
+  localStorage.removeItem('scienceAR_biology');clues.clear();updateMap();
+  document.querySelectorAll('.clue').forEach((b,i)=>{b.classList.remove('done');b.textContent=`เบาะแส ${i+1}`});
+  question.style.display='none';feedback.textContent='';clueText.textContent='เลือกเบาะแสเพื่อเริ่มสำรวจ';
+});
+
+scene.addEventListener('arReady',forceVideo);
+window.addEventListener('resize',forceVideo);
+updateMap();
+</script>
+</body>
+</html>

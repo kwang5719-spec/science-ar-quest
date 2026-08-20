@@ -3,15 +3,20 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Science AR Quest — Mission Map</title>
+<meta name="theme-color" content="#061516">
+<title>Science AR Quest — แผนที่ภารกิจ</title>
 <style>
-*{box-sizing:border-box} body{margin:0;min-height:100vh;font-family:system-ui,-apple-system,"Noto Sans Thai",sans-serif;background:radial-gradient(circle at top,#173f35,#061516 60%);color:#fff;padding:20px}
-.wrap{max-width:720px;margin:auto}.head{text-align:center;padding:12px}.head h1{margin:.2em 0;font-size:clamp(30px,8vw,48px)}.lime{color:#b7ff62}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;font-family:system-ui,-apple-system,"Noto Sans Thai",sans-serif;background:radial-gradient(circle at top,#173f35,#061516 60%);color:#fff;padding:18px}
+.wrap{max-width:760px;margin:auto}.head{text-align:center;padding:8px}.head h1{font-size:clamp(34px,9vw,54px);margin:.2em}.lime{color:#b7ff62}
 .core{background:#0b2524;border:1px solid #74e98a;border-radius:22px;padding:18px;margin:14px 0;text-align:center}
-.bar{height:14px;background:#18352f;border-radius:99px;overflow:hidden;margin:12px 0}.fill{height:100%;width:0;background:#b7ff37;transition:.4s}
-.grid{display:grid;gap:10px}.m{display:flex;align-items:center;justify-content:space-between;gap:12px;background:#102824;border:1px solid #315f50;border-radius:17px;padding:15px}.m.done{border-color:#b7ff62;background:#173d2d}.name{font-weight:800}.sub{font-size:13px;opacity:.8;margin-top:3px}.status{white-space:nowrap;font-weight:800}.done .status{color:#b7ff62}
+.bar{height:14px;background:#18352f;border-radius:99px;overflow:hidden;margin:12px 0}.fill{height:100%;width:0;background:#b7ff37;transition:.35s}
+.grid{display:grid;gap:10px}
+.m{display:flex;align-items:center;justify-content:space-between;gap:12px;background:#102824;border:1px solid #315f50;border-radius:17px;padding:14px}
+.m.done{border-color:#b7ff62;background:#173d2d}.m.available{cursor:pointer}.m.soon{opacity:.72}
+.name{font-weight:900}.sub{font-size:13px;opacity:.8;margin-top:3px}.status{white-space:nowrap;font-weight:900}.done .status{color:#b7ff62}
 .final{margin-top:14px;background:#101d2b;border:1px solid #456580;border-radius:18px;padding:16px;text-align:center}.final.unlocked{background:#253b18;border-color:#b7ff62}
-.btn{border:0;border-radius:999px;padding:12px 18px;font-weight:800;background:#b7ff37;color:#09200d;margin:5px}.btn.secondary{background:#173f35;color:#fff;border:1px solid #78d990}.btn:disabled{opacity:.35}
+.btn{border:0;border-radius:999px;padding:12px 18px;font-weight:900;background:#b7ff37;color:#09200d;margin:5px;text-decoration:none;display:inline-block}.btn.secondary{background:#173f35;color:#fff;border:1px solid #78d990}.btn:disabled{opacity:.35}
 .small{font-size:13px;opacity:.8}
 </style>
 </head>
@@ -20,66 +25,84 @@
   <div class="head">
     <div>🔬 SCIENCE AR QUEST</div>
     <h1>แผนที่ภารกิจ</h1>
-    <div class="lime">รวบรวมชิ้นส่วนวิทยาศาสตร์ให้ครบทั้ง 5 ชิ้น</div>
+    <div class="lime">เลือกทำภารกิจภาควิชาใดก่อนก็ได้</div>
   </div>
 
   <div class="core">
     <div style="font-size:42px">🔵 🟢 🟡 🟣 🔴</div>
     <h2>SCIENCE CORE <span id="count">0 / 5</span></h2>
     <div class="bar"><div class="fill" id="fill"></div></div>
-    <div class="small" id="coreText">ออกสำรวจแต่ละภาควิชาเพื่อรวบรวมชิ้นส่วน</div>
+    <div class="small" id="coreText">รวบรวมชิ้นส่วนจากทั้ง 5 ภาควิชา</div>
   </div>
 
   <div class="grid" id="missions"></div>
 
   <div class="final" id="evaluation">
     <h2>📡 ภารกิจที่ 6: ส่งข้อมูลการสำรวจ</h2>
-    <p id="evalText">🔒 จะปลดล็อกเมื่อรวบรวมชิ้นส่วนครบ 5/5</p>
+    <p id="evalText">จะปลดล็อกเมื่อรวบรวมชิ้นส่วนครบ 5/5</p>
     <button class="btn" id="evalBtn" disabled>ทำแบบประเมินกิจกรรม</button>
   </div>
 
-  <div style="text-align:center;margin-top:16px">
-    <button class="btn secondary" id="reset">รีเซ็ตสถานะสำหรับทดสอบ</button>
+  <div style="text-align:center;margin-top:15px">
+    <a class="btn secondary" href="./index.html">⌂ กลับหน้าหลัก</a>
+    <button class="btn secondary" id="reset">รีเซ็ตสถานะทดสอบ</button>
   </div>
 </div>
 
 <script>
 const missions=[
- {key:'science',icon:'🔬',name:'วิทยาศาสตร์ ม.ต้น',frag:'ชิ้นส่วนแห่งการค้นพบ'},
- {key:'biology',icon:'🧬',name:'ชีววิทยา',frag:'ชิ้นส่วนแห่งชีวิต'},
- {key:'physics',icon:'⚡',name:'ฟิสิกส์',frag:'ชิ้นส่วนแห่งพลังงาน'},
- {key:'chemistry',icon:'⚗️',name:'เคมี',frag:'ชิ้นส่วนแห่งสสาร'},
- {key:'earth',icon:'🌎',name:'โลกและดาราศาสตร์',frag:'ชิ้นส่วนแห่งจักรวาล'}
+ {key:'science',icon:'🔬',name:'วิทยาศาสตร์ ม.ต้น',frag:'ชิ้นส่วนแห่งการค้นพบ',href:null},
+ {key:'biology',icon:'🧬',name:'ชีววิทยา',frag:'ชิ้นส่วนแห่งชีวิต',href:'./biology.html'},
+ {key:'physics',icon:'⚡',name:'ฟิสิกส์',frag:'ชิ้นส่วนแห่งพลังงาน',href:null},
+ {key:'chemistry',icon:'⚗️',name:'เคมี',frag:'ชิ้นส่วนแห่งสสาร',href:null},
+ {key:'earth',icon:'🌎',name:'โลกและดาราศาสตร์',frag:'ชิ้นส่วนแห่งจักรวาล',href:null}
 ];
-function key(k){return 'scienceAR_'+k}
+const storageKey=k=>'scienceAR_'+k;
+
 function render(){
- const box=document.querySelector('#missions'); box.innerHTML='';
- let n=0;
- missions.forEach(m=>{
-   const done=localStorage.getItem(key(m.key))==='complete'; if(done)n++;
-   const d=document.createElement('div'); d.className='m'+(done?' done':'');
-   d.innerHTML=`<div><div class="name">${m.icon} ${m.name}</div><div class="sub">${m.frag}</div></div><div class="status">${done?'✓ ผ่านแล้ว':'ยังไม่ผ่าน'}</div>`;
-   box.appendChild(d);
- });
- document.querySelector('#count').textContent=`${n} / 5`;
- document.querySelector('#fill').style.width=`${n*20}%`;
- const ev=document.querySelector('#evaluation'), btn=document.querySelector('#evalBtn');
- if(n===5){
-   ev.classList.add('unlocked'); btn.disabled=false;
-   document.querySelector('#evalText').textContent='✓ รวบรวมชิ้นส่วนครบแล้ว พร้อมส่งข้อมูลการสำรวจ';
-   document.querySelector('#coreText').textContent='SCIENCE CORE ครบ 5/5 — ปลดล็อกภารกิจถัดไปแล้ว';
- }else{
-   ev.classList.remove('unlocked'); btn.disabled=true;
-   document.querySelector('#evalText').textContent=`🔒 ต้องรวบรวมอีก ${5-n} ชิ้น เพื่อปลดล็อกแบบประเมิน`;
-   document.querySelector('#coreText').textContent='ออกสำรวจแต่ละภาควิชาเพื่อรวบรวมชิ้นส่วน';
- }
+  const box=document.querySelector('#missions');
+  box.innerHTML='';
+  let n=0;
+
+  missions.forEach(m=>{
+    const done=localStorage.getItem(storageKey(m.key))==='complete';
+    if(done)n++;
+
+    const row=document.createElement('div');
+    row.className='m '+(done?'done ':'')+(m.href?'available':'soon');
+
+    const state = done ? '✓ ผ่านแล้ว' : (m.href ? 'เริ่มภารกิจ ›' : 'เตรียมเปิดเร็ว ๆ นี้');
+    row.innerHTML=`<div><div class="name">${m.icon} ${m.name}</div><div class="sub">${m.frag}</div></div><div class="status">${state}</div>`;
+
+    if(m.href) row.addEventListener('click',()=>location.href=m.href);
+    box.appendChild(row);
+  });
+
+  document.querySelector('#count').textContent=`${n} / 5`;
+  document.querySelector('#fill').style.width=`${n*20}%`;
+
+  const ev=document.querySelector('#evaluation');
+  const btn=document.querySelector('#evalBtn');
+  if(n===5){
+    ev.classList.add('unlocked');
+    btn.disabled=false;
+    document.querySelector('#evalText').textContent='✓ รวบรวมครบแล้ว พร้อมทำแบบประเมินเพื่อปลดล็อก Final Mission';
+    document.querySelector('#coreText').textContent='SCIENCE CORE ครบ 5/5';
+  }else{
+    ev.classList.remove('unlocked');
+    btn.disabled=true;
+    document.querySelector('#evalText').textContent=`ต้องรวบรวมอีก ${5-n} ชิ้น เพื่อปลดล็อกแบบประเมิน`;
+    document.querySelector('#coreText').textContent='รวบรวมชิ้นส่วนจากทั้ง 5 ภาควิชา';
+  }
 }
-document.querySelector('#evalBtn').onclick=()=>alert('ขั้นถัดไปเราจะเชื่อมปุ่มนี้กับแบบประเมินจริงของงาน');
+document.querySelector('#evalBtn').onclick=()=>alert('ภายหลังจะเชื่อมกับแบบประเมินจริงของกิจกรรม');
 document.querySelector('#reset').onclick=()=>{
- if(confirm('รีเซ็ตความคืบหน้าทั้งหมดสำหรับการทดสอบ?')){
-   missions.forEach(m=>localStorage.removeItem(key(m.key))); render();
- }
+  if(confirm('รีเซ็ตความคืบหน้าทั้งหมดสำหรับการทดสอบ?')){
+    missions.forEach(m=>localStorage.removeItem(storageKey(m.key)));
+    render();
+  }
 };
 render();
 </script>
-</body></html>
+</body>
+</html>
