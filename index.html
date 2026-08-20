@@ -4,139 +4,98 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
   <meta name="theme-color" content="#061516">
-  <title>Science AR Quest — ภารกิจชีววิทยา</title>
+  <title>Science AR Quest — Diagnostic v3</title>
 
   <script src="https://aframe.io/releases/1.6.0/aframe.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
 
   <style>
     *{box-sizing:border-box}
-    html,body{
-      margin:0;
-      width:100%;
-      height:100%;
-      overflow:hidden;
-      font-family:system-ui,-apple-system,"Noto Sans Thai",sans-serif;
-      background:#000;
-    }
+    html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#000;font-family:system-ui,-apple-system,"Noto Sans Thai",sans-serif}
 
-    /* สำคัญสำหรับ iPhone/Safari:
-       บังคับ video จาก MindAR ให้แสดงเต็มจอ และ canvas อยู่เหนือ video แบบโปร่งใส */
     video{
-      position:fixed !important;
-      inset:0 !important;
-      width:100vw !important;
-      height:100vh !important;
-      object-fit:cover !important;
-      display:block !important;
-      visibility:visible !important;
-      opacity:1 !important;
-      z-index:0 !important;
-      background:#000 !important;
+      position:fixed !important; inset:0 !important;
+      width:100vw !important; height:100vh !important;
+      object-fit:cover !important; display:block !important;
+      visibility:visible !important; opacity:1 !important;
+      z-index:0 !important; background:#000 !important;
     }
 
-    a-scene, .a-canvas, canvas{
-      position:fixed !important;
-      inset:0 !important;
-      width:100vw !important;
-      height:100vh !important;
-      z-index:1 !important;
-      background:transparent !important;
+    a-scene,.a-canvas,canvas{
+      position:fixed !important; inset:0 !important;
+      width:100vw !important; height:100vh !important;
+      z-index:1 !important; background:transparent !important;
     }
 
     #start{
-      position:fixed;
-      inset:0;
-      z-index:30;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      padding:24px;
-      background:radial-gradient(circle at 50% 25%,#143d32,#061516 65%);
+      position:fixed; inset:0; z-index:40;
+      display:flex; align-items:center; justify-content:center;
+      padding:24px; background:radial-gradient(circle at 50% 20%,#173f35,#061516 65%)
     }
 
     .card{
-      max-width:520px;
-      color:#fff;
-      text-align:center;
-      background:#0b2524ee;
-      border:1px solid #7dff91;
-      border-radius:24px;
-      padding:28px 22px;
-      box-shadow:0 0 40px #56ff7a33;
+      width:min(92vw,540px); padding:26px 22px; border-radius:24px;
+      background:#0b2524ef; border:1px solid #7dff91; color:#fff; text-align:center
     }
 
-    h1{margin:.2em 0;font-size:clamp(30px,8vw,48px)}
+    h1{margin:.2em 0;font-size:clamp(28px,7vw,44px)}
     h2{margin:.2em 0;color:#b7ff62}
-    p{line-height:1.6;color:#e6f4ee}
+    p{line-height:1.55;color:#e6f4ee}
 
     .btn{
-      border:0;
-      border-radius:999px;
-      padding:14px 24px;
-      font-size:18px;
-      font-weight:800;
-      background:#b7ff37;
-      color:#09200d;
-      cursor:pointer;
+      border:0;border-radius:999px;padding:14px 24px;font-size:18px;font-weight:800;
+      background:#b7ff37;color:#09200d;cursor:pointer
     }
 
-    #hud{
-      display:none;
-      position:fixed;
-      z-index:20;
-      left:12px;
-      right:12px;
-      top:max(12px,env(safe-area-inset-top));
-      pointer-events:none;
+    #topHud{
+      display:none;position:fixed;z-index:25;left:12px;right:12px;
+      top:max(12px,env(safe-area-inset-top));pointer-events:none
     }
-
-    #status{
-      margin:auto;
-      max-width:560px;
-      background:#061516dd;
-      color:#fff;
-      border:1px solid #8cff76;
-      border-radius:18px;
-      padding:12px 16px;
-      text-align:center;
-      backdrop-filter:blur(6px);
+    .hudbox{
+      margin:auto;max-width:640px;background:#061516dd;color:#fff;
+      border:1px solid #8cff76;border-radius:18px;padding:11px 14px;text-align:center;
+      backdrop-filter:blur(6px)
     }
+    .ok{color:#b7ff62;font-weight:800}
+    .warn{color:#ffd978;font-weight:800}
+    .small{font-size:13px;opacity:.9}
 
-    #status strong{color:#b7ff62}
-    .small{font-size:13px;opacity:.88}
+    #scanFrame{
+      display:none;position:fixed;z-index:18;left:50%;top:53%;
+      transform:translate(-50%,-50%);
+      width:min(72vw,460px);aspect-ratio:0.71;
+      border:3px solid rgba(255,255,255,.82);border-radius:18px;
+      box-shadow:0 0 0 9999px rgba(0,0,0,.08);
+      pointer-events:none
+    }
+    #scanFrame:before,#scanFrame:after{
+      content:"";position:absolute;width:72px;height:72px;border-color:#b7ff37;border-style:solid
+    }
+    #scanFrame:before{left:-3px;top:-3px;border-width:6px 0 0 6px;border-radius:16px 0 0 0}
+    #scanFrame:after{right:-3px;bottom:-3px;border-width:0 6px 6px 0;border-radius:0 0 16px 0}
+
+    #guide{
+      display:none;position:fixed;z-index:24;left:16px;right:16px;
+      bottom:max(18px,env(safe-area-inset-bottom));
+      text-align:center;color:#fff
+    }
+    #guide .panel{
+      margin:auto;max-width:640px;background:#0a211feb;border:1px solid #6de88b;
+      border-radius:18px;padding:12px 14px;backdrop-filter:blur(7px)
+    }
 
     #found{
-      display:none;
-      position:fixed;
-      z-index:22;
-      left:18px;
-      right:18px;
-      bottom:max(22px,env(safe-area-inset-bottom));
-      background:#10291fee;
-      color:white;
-      border:1px solid #b7ff62;
-      border-radius:20px;
-      padding:16px;
-      text-align:center;
-      backdrop-filter:blur(8px);
+      display:none;position:fixed;z-index:30;left:18px;right:18px;
+      bottom:max(20px,env(safe-area-inset-bottom));
+      background:#10291ff2;color:#fff;border:1px solid #b7ff62;border-radius:20px;
+      padding:16px;text-align:center;backdrop-filter:blur(8px)
     }
-
     #found b{color:#b7ff62;font-size:20px}
 
-    #debug{
-      display:none;
-      position:fixed;
-      z-index:25;
-      left:14px;
-      right:14px;
-      bottom:max(18px,env(safe-area-inset-bottom));
-      padding:12px 14px;
-      border-radius:14px;
-      background:#5b1111ee;
-      color:#fff;
-      font-size:13px;
-      line-height:1.45;
+    #diag{
+      display:none;position:fixed;z-index:35;left:12px;right:12px;top:110px;
+      margin:auto;max-width:640px;background:#311515ef;color:#fff;border:1px solid #ff8f8f;
+      border-radius:16px;padding:12px;font-size:13px;line-height:1.45
     }
   </style>
 </head>
@@ -145,159 +104,149 @@
   <div id="start">
     <div class="card">
       <div>🔬 SCIENCE AR QUEST</div>
-      <h1>ภารกิจชีววิทยา</h1>
-      <h2>ค้นหาสัญญาณแห่งชีวิต 🧬</h2>
-      <p>กดเริ่มภารกิจและอนุญาตการใช้กล้อง จากนั้นหันกล้องไปยังโปสเตอร์ชีววิทยา</p>
-      <button class="btn" id="startBtn">เริ่มภารกิจ</button>
-      <p class="small">หากใช้ iPhone แนะนำเปิดด้วย Safari โดยตรง</p>
+      <h1>โหมดทดสอบ AR</h1>
+      <h2>ชีววิทยา • Diagnostic v3</h2>
+      <p>เวอร์ชันนี้ออกแบบเพื่อทดสอบ Android/Samsung โดยเฉพาะ พร้อมกรอบช่วยจัดตำแหน่งโปสเตอร์และสถานะระบบที่ละเอียดขึ้น</p>
+      <button class="btn" id="startBtn">เริ่มทดสอบ</button>
+      <p class="small">แนะนำให้ใช้ Chrome เวอร์ชันล่าสุดบน Android และ Safari บน iPhone</p>
     </div>
   </div>
 
-  <div id="hud">
-    <div id="status">
-      <strong>กำลังเปิดกล้อง…</strong><br>
+  <div id="topHud">
+    <div class="hudbox" id="status">
+      <span class="warn">กำลังเริ่มระบบ…</span><br>
       <span class="small">กรุณารอสักครู่</span>
     </div>
   </div>
 
-  <div id="found">
-    <b>🧬 ตรวจพบสัญญาณสิ่งมีชีวิต!</b><br>
-    ภารกิจที่ 02 • ชีววิทยา<br>
-    <span class="small">ระบบ AR จับโปสเตอร์ได้สำเร็จ</span>
+  <div id="scanFrame"></div>
+
+  <div id="guide">
+    <div class="panel">
+      <b>จัดโปสเตอร์ให้อยู่ในกรอบ</b><br>
+      <span class="small">ถือกล้องตรง • ให้เห็นโปสเตอร์เกือบเต็มกรอบ • ขยับเข้า–ออกช้า ๆ • หลีกเลี่ยงแสงสะท้อน</span>
+    </div>
   </div>
 
-  <div id="debug"></div>
+  <div id="found">
+    <b>🧬 ตรวจพบโปสเตอร์ชีววิทยา!</b><br>
+    ระบบ Image Tracking ทำงานสำเร็จบนอุปกรณ์นี้
+  </div>
 
-  <a-scene
-    id="scene"
-    mindar-image="imageTargetSrc: ./targets.mind; autoStart: false; uiLoading: no; uiScanning: no; uiError: no; filterMinCF: 0.001; filterBeta: 0.01;"
+  <div id="diag"></div>
+
+  <a-scene id="scene"
+    mindar-image="imageTargetSrc: ./targets.mind; autoStart: false; uiLoading: no; uiScanning: no; uiError: no; filterMinCF: 0.0005; filterBeta: 0.005; warmupTolerance: 8; missTolerance: 12;"
     color-space="sRGB"
-    renderer="alpha: true; colorManagement: true; physicallyCorrectLights: true;"
-    vr-mode-ui="enabled: false"
-    device-orientation-permission-ui="enabled: false"
+    renderer="alpha:true;colorManagement:true;physicallyCorrectLights:true;antialias:true"
+    vr-mode-ui="enabled:false"
+    device-orientation-permission-ui="enabled:false"
     embedded>
 
     <a-camera position="0 0 0" look-controls="enabled:false"></a-camera>
 
     <a-entity id="target" mindar-image-target="targetIndex:0">
-      <a-ring
-        position="0 0 0.08"
-        radius-inner="0.29"
-        radius-outer="0.32"
-        color="#B7FF37"
-        animation="property:rotation;to:0 0 360;loop:true;dur:5000;easing:linear">
-      </a-ring>
-
-      <a-circle
-        position="0 0 0.075"
-        radius="0.22"
-        color="#143D32"
-        opacity="0.82">
-      </a-circle>
-
-      <a-text
-        value="LIFE\nSIGNAL"
-        align="center"
-        color="#FFFFFF"
-        width="1.25"
-        position="0 0.025 0.09">
-      </a-text>
-
-      <a-sphere
-        radius="0.055"
-        position="0 -0.17 0.11"
-        color="#B7FF37"
-        animation="property:scale;to:1.45 1.45 1.45;dir:alternate;loop:true;dur:650">
-      </a-sphere>
+      <a-ring position="0 0 0.08" radius-inner="0.29" radius-outer="0.32" color="#B7FF37"
+        animation="property:rotation;to:0 0 360;loop:true;dur:4200;easing:linear"></a-ring>
+      <a-circle position="0 0 0.075" radius="0.22" color="#143D32" opacity="0.82"></a-circle>
+      <a-text value="BIO\nTARGET" align="center" color="#FFFFFF" width="1.2" position="0 0.025 0.09"></a-text>
+      <a-sphere radius="0.055" position="0 -0.17 0.11" color="#B7FF37"
+        animation="property:scale;to:1.5 1.5 1.5;dir:alternate;loop:true;dur:600"></a-sphere>
     </a-entity>
   </a-scene>
 
 <script>
-  const start = document.querySelector('#start');
-  const hud = document.querySelector('#hud');
-  const found = document.querySelector('#found');
-  const debug = document.querySelector('#debug');
   const scene = document.querySelector('#scene');
   const target = document.querySelector('#target');
+  const start = document.querySelector('#start');
+  const topHud = document.querySelector('#topHud');
   const status = document.querySelector('#status');
+  const scanFrame = document.querySelector('#scanFrame');
+  const guide = document.querySelector('#guide');
+  const found = document.querySelector('#found');
+  const diag = document.querySelector('#diag');
 
-  function setStatus(title, subtitle=''){
-    status.innerHTML = `<strong>${title}</strong>${subtitle ? `<br><span class="small">${subtitle}</span>` : ''}`;
+  function setStatus(main, sub='', cls='ok'){
+    status.innerHTML = `<span class="${cls}">${main}</span>${sub?`<br><span class="small">${sub}</span>`:''}`;
   }
 
-  function showError(msg){
-    debug.style.display = 'block';
-    debug.innerHTML = `<b>เปิดกล้องไม่สำเร็จ</b><br>${msg}<br><br>
-    ลองตรวจสอบ: การอนุญาตกล้องใน Safari → Settings → Safari → Camera → Allow`;
+  function showDiag(msg){
+    diag.style.display='block';
+    diag.innerHTML = `<b>ข้อมูลวินิจฉัย</b><br>${msg}`;
   }
 
-  async function forceVideoVisible(){
-    // MindAR จะสร้าง video หลังเริ่มระบบ จึงตรวจและบังคับ style ซ้ำอีกครั้ง
-    for(let i=0;i<30;i++){
-      const v = document.querySelector('video');
+  async function getVideo(){
+    for(let i=0;i<40;i++){
+      const v=document.querySelector('video');
       if(v){
         v.setAttribute('playsinline','');
         v.setAttribute('webkit-playsinline','');
-        v.muted = true;
+        v.muted=true;
         Object.assign(v.style,{
-          position:'fixed',
-          inset:'0',
-          width:'100vw',
-          height:'100vh',
-          objectFit:'cover',
-          display:'block',
-          visibility:'visible',
-          opacity:'1',
-          zIndex:'0'
+          position:'fixed',inset:'0',width:'100vw',height:'100vh',
+          objectFit:'cover',display:'block',visibility:'visible',opacity:'1',zIndex:'0'
         });
-        return true;
+        return v;
       }
-      await new Promise(r=>setTimeout(r,200));
+      await new Promise(r=>setTimeout(r,150));
     }
-    return false;
+    return null;
   }
 
-  document.querySelector('#startBtn').addEventListener('click', async () => {
-    start.style.display = 'none';
-    hud.style.display = 'block';
-    setStatus('กำลังเปิดกล้อง…','กรุณารอสักครู่');
+  document.querySelector('#startBtn').addEventListener('click', async()=>{
+    start.style.display='none';
+    topHud.style.display='block';
+    scanFrame.style.display='block';
+    guide.style.display='block';
+    setStatus('กำลังโหลดระบบ AR…','กำลังอ่าน targets.mind','warn');
 
     try{
-      const system = scene.systems['mindar-image-system'];
-      await system.start();
+      const sys = scene.systems['mindar-image-system'];
+      if(!sys){
+        throw new Error('ไม่พบ mindar-image-system');
+      }
 
-      const videoFound = await forceVideoVisible();
+      setStatus('พบระบบ MindAR ✓','กำลังเปิดกล้อง','ok');
+      await sys.start();
 
-      if(videoFound){
-        setStatus('กล้องพร้อมใช้งาน ✓','หันกล้องไปยังโปสเตอร์ชีววิทยา');
-      } else {
-        showError('ระบบเริ่มทำงานแล้ว แต่ไม่พบภาพวิดีโอจากกล้อง');
+      const video = await getVideo();
+      if(video){
+        setStatus('กล้องพร้อมใช้งาน ✓','กำลังค้นหาโปสเตอร์ชีววิทยา','ok');
+
+        setTimeout(()=>{
+          if(found.style.display!=='block'){
+            setStatus('ยังไม่พบ Target','ลองให้โปสเตอร์ใหญ่ขึ้นและตรงกรอบมากขึ้น','warn');
+          }
+        },7000);
+      }else{
+        showDiag('ระบบ AR เริ่มแล้ว แต่ไม่พบ video element จากกล้อง');
+        setStatus('กล้องไม่พร้อม','ไม่พบภาพวิดีโอ','warn');
       }
     }catch(e){
       console.error(e);
-      showError(e?.message || 'เกิดข้อผิดพลาดที่ไม่ทราบสาเหตุ');
-      setStatus('เกิดข้อผิดพลาด','ตรวจสอบข้อความด้านล่าง');
+      showDiag(e?.message || 'เกิดข้อผิดพลาดที่ไม่ทราบสาเหตุ');
+      setStatus('เริ่มระบบไม่สำเร็จ','ดูข้อมูลวินิจฉัยด้านล่าง','warn');
     }
   });
 
-  target.addEventListener('targetFound', () => {
-    setStatus('✓ พบโปสเตอร์ชีววิทยา','ตรวจพบเป้าหมาย AR');
-    found.style.display = 'block';
+  target.addEventListener('targetFound',()=>{
+    setStatus('✓ พบโปสเตอร์ชีววิทยา','Image Tracking สำเร็จ','ok');
+    found.style.display='block';
+    guide.style.display='none';
+    scanFrame.style.borderColor='#b7ff37';
   });
 
-  target.addEventListener('targetLost', () => {
-    setStatus('กำลังค้นหาโปสเตอร์ชีววิทยา…','ขยับกล้องช้า ๆ และให้โปสเตอร์อยู่ในกรอบ');
-    found.style.display = 'none';
+  target.addEventListener('targetLost',()=>{
+    found.style.display='none';
+    guide.style.display='block';
+    setStatus('หลุดจาก Target','หันกล้องกลับไปยังโปสเตอร์','warn');
   });
 
-  // ช่วยวินิจฉัยบนมือถือ
-  scene.addEventListener('arReady', () => {
-    forceVideoVisible();
+  scene.addEventListener('arReady',()=>{
+    getVideo();
   });
 
-  window.addEventListener('resize', () => {
-    forceVideoVisible();
-  });
+  window.addEventListener('resize',()=>getVideo());
 </script>
 </body>
 </html>
