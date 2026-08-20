@@ -8,19 +8,47 @@
 <style>
 *{box-sizing:border-box}
 html,body{margin:0;min-height:100%;font-family:system-ui,-apple-system,"Noto Sans Thai",sans-serif;background:#061516;color:#fff}
-body{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:22px;background:radial-gradient(circle at 50% 18%,#17483b,#061516 64%)}
-.card{width:min(94vw,640px);padding:30px 24px;border-radius:28px;background:#0b2524ec;border:1px solid #76ed8d;box-shadow:0 0 50px #55ff7930;text-align:center}
-.kicker{letter-spacing:.08em;opacity:.9}.title{font-size:clamp(38px,10vw,64px);font-weight:900;line-height:1.05;margin:.15em 0}
-.green{color:#b7ff37}.sub{font-size:clamp(18px,4.8vw,24px);color:#d8f6e6;margin:12px auto 22px;max-width:520px;line-height:1.5}
-.core{font-size:46px;margin:10px 0}.btn{display:block;width:100%;max-width:420px;margin:10px auto;padding:15px 20px;border:0;border-radius:999px;font-size:18px;font-weight:900;text-decoration:none}
-.primary{background:#b7ff37;color:#09200d}.secondary{background:#153b34;color:#fff;border:1px solid #78d990}
-.note{font-size:13px;opacity:.76;margin-top:18px;line-height:1.5}
+body{
+  min-height:100vh;display:flex;align-items:center;justify-content:center;padding:22px;
+  background:radial-gradient(circle at 50% 18%,#17483b,#061516 64%)
+}
+.card{
+  width:min(94vw,680px);padding:30px 24px;border-radius:28px;background:#0b2524ec;
+  border:1px solid #76ed8d;box-shadow:0 0 50px #55ff7930;text-align:center
+}
+.kicker{letter-spacing:.08em;opacity:.9}
+.title{font-size:clamp(38px,10vw,64px);font-weight:900;line-height:1.05;margin:.15em 0}
+.green{color:#b7ff37}
+.event{
+  margin:18px auto 8px;padding:14px 16px;max-width:560px;border-radius:18px;
+  background:#102824;border:1px solid #315f50;line-height:1.5
+}
+.event b{color:#dfffc2}
+.sub{font-size:clamp(17px,4.6vw,23px);color:#d8f6e6;margin:14px auto 22px;max-width:540px;line-height:1.5}
+.core{font-size:46px;margin:10px 0}
+.btn{
+  display:block;width:100%;max-width:430px;margin:10px auto;padding:15px 20px;border:0;
+  border-radius:999px;font-size:18px;font-weight:900;text-decoration:none
+}
+.primary{background:#b7ff37;color:#09200d}
+.secondary{background:#153b34;color:#fff;border:1px solid #78d990}
+.credit{
+  margin-top:24px;padding-top:18px;border-top:1px solid #315f50;
+  font-size:13px;line-height:1.65;color:#c9ded6
+}
+.note{font-size:13px;opacity:.76;margin-top:16px;line-height:1.5}
 </style>
 </head>
 <body>
   <main class="card">
     <div class="kicker">🔬 SCIENCE AR QUEST</div>
     <div class="title">ภารกิจพิชิต<br><span class="green">SCIENCE CORE</span></div>
+
+    <div class="event">
+      <b>กิจกรรมสัปดาห์วิทยาศาสตร์ ประจำปีการศึกษา 2569</b><br>
+      โรงเรียนกันทรลักษ์วิทยา
+    </div>
+
     <div class="core">🔵 🟢 🟡 🟣 🔴</div>
     <div class="sub">ออกสำรวจทั้ง 5 ภาควิชา สแกน AR ทำภารกิจ และรวบรวมชิ้นส่วนวิทยาศาสตร์ให้ครบ</div>
 
@@ -28,6 +56,12 @@ body{min-height:100vh;display:flex;align-items:center;justify-content:center;pad
     <a class="btn secondary" href="./mission-map.html">🗺 ดูแผนที่ภารกิจ</a>
 
     <div class="note">นักเรียนสามารถเริ่มจากภาควิชาใดก่อนก็ได้ ระบบจะบันทึกความคืบหน้าไว้ในอุปกรณ์และเบราว์เซอร์เครื่องนี้</div>
+
+    <div class="credit">
+      <b>จัดทำโดย นางสาวกรกนก อยู่สุข</b><br>
+      ครู กลุ่มสาระการเรียนรู้วิทยาศาสตร์และเทคโนโลยี<br>
+      โรงเรียนกันทรลักษ์วิทยา
+    </div>
   </main>
 </body>
 </html>
