@@ -2,102 +2,208 @@
 <html lang="th">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
 <meta name="theme-color" content="#061516">
 <title>Science AR Quest — วิทยาศาสตร์ ม.ต้น</title>
+
+<script src="https://aframe.io/releases/1.6.0/aframe.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
+
 <style>
 *{box-sizing:border-box}
-html,body{margin:0;min-height:100%;font-family:system-ui,-apple-system,"Noto Sans Thai",sans-serif;background:#061516;color:#fff}
-body{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:18px;background:radial-gradient(circle at 50% 15%,#173f35,#061516 66%)}
-.card{width:min(94vw,680px);padding:26px 22px;border-radius:26px;background:#0b2524ef;border:1px solid #76ed8d;box-shadow:0 0 45px #55ff7925}
-.center{text-align:center}.title{font-size:clamp(34px,9vw,54px);font-weight:900;margin:.2em 0}.lime{color:#b7ff62}
-.clue{margin:10px 0;padding:14px;border-radius:16px;background:#102824;border:1px solid #315f50;cursor:pointer}
-.clue.done{border-color:#b7ff62;background:#173d2d}.clue b{display:block;margin-bottom:4px}
-.question{display:none;margin-top:18px;padding-top:16px;border-top:1px solid #315f50}
-.answer{display:block;width:100%;text-align:left;margin:8px 0;padding:13px 14px;border-radius:14px;border:1px solid #416c5d;background:#14332e;color:#fff;font-size:16px}
-.answer.wrong{border-color:#ff8d8d;background:#472020}.answer.correct{border-color:#b7ff62;background:#244d27}
-.feedback{min-height:30px;font-weight:800;margin:8px 0}
-.btn{display:inline-block;border:0;border-radius:999px;padding:13px 20px;font-size:16px;font-weight:900;background:#b7ff37;color:#09200d;text-decoration:none;margin:5px}
-.secondary{background:#173f35;color:#fff;border:1px solid #78d990}
-#success{display:none;text-align:center}
-.fragment{font-size:70px}
-.small{font-size:13px;opacity:.78;line-height:1.5}
+html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#000;font-family:system-ui,-apple-system,"Noto Sans Thai",sans-serif}
+video{position:fixed!important;inset:0!important;width:100vw!important;height:100vh!important;object-fit:cover!important;display:block!important;visibility:visible!important;opacity:1!important;z-index:0!important;background:#000!important}
+a-scene,.a-canvas,canvas{position:fixed!important;inset:0!important;width:100vw!important;height:100vh!important;z-index:1!important;background:transparent!important}
+
+#start{position:fixed;inset:0;z-index:40;display:flex;align-items:center;justify-content:center;padding:20px;background:radial-gradient(circle at 50% 20%,#163c52,#061516 68%)}
+.card{width:min(94vw,600px);padding:26px 22px;border-radius:24px;background:#0b2524f2;border:1px solid #72d8ff;color:#fff;text-align:center;box-shadow:0 0 45px #33bbff2b}
+h1{font-size:clamp(34px,9vw,52px);margin:.2em 0} h2{color:#8ee7ff;margin:.3em 0}
+p{line-height:1.55;color:#e3f2f8}
+.btn{border:0;border-radius:999px;padding:13px 22px;font-size:17px;font-weight:900;background:#67d8ff;color:#06202a;cursor:pointer;margin:5px}
+.btn.secondary{background:#143844;color:#fff;border:1px solid #67d8ff}
+
+#hud{display:none;position:fixed;z-index:25;left:12px;right:12px;top:max(12px,env(safe-area-inset-top));pointer-events:none}
+#status{margin:auto;max-width:640px;background:#061516df;color:#fff;border:1px solid #72d8ff;border-radius:18px;padding:11px 14px;text-align:center;backdrop-filter:blur(6px)}
+.ok{color:#8ee7ff;font-weight:800}.small{font-size:13px;opacity:.88}
+
+#mission{display:none;position:fixed;z-index:30;left:14px;right:14px;bottom:max(16px,env(safe-area-inset-bottom));margin:auto;max-width:680px;background:#071b1af2;color:#fff;border:1px solid #72d8ff;border-radius:22px;padding:15px;backdrop-filter:blur(8px);max-height:58vh;overflow:auto}
+#mission h3{margin:0 0 6px;color:#8ee7ff}
+.clue{width:100%;text-align:left;padding:12px 13px;margin:7px 0;border-radius:14px;border:1px solid #3b6e7e;background:#12343d;color:#fff;font-size:15px}
+.clue.done{background:#163f47;border-color:#8ee7ff}
+#question{display:none;margin-top:12px;padding-top:10px;border-top:1px solid #315f68}
+.answer{width:100%;text-align:left;padding:11px 12px;margin:5px 0;border-radius:12px;border:1px solid #406d73;background:#14333a;color:#fff;font-size:15px}
+.answer.correct{border-color:#8ee7ff;background:#204b55}
+.answer.wrong{border-color:#ff8c8c;background:#4b2020}
+#feedback{min-height:28px;margin-top:6px;font-weight:700}
+
+#success{display:none;position:fixed;inset:0;z-index:50;align-items:center;justify-content:center;padding:20px;background:rgba(2,13,12,.92)}
+.fragment{font-size:72px;filter:drop-shadow(0 0 24px #67d8ff)}
+.progress{margin:12px auto;padding:10px 14px;border-radius:14px;background:#0c2923;border:1px solid #4f8d71;font-weight:800}
 </style>
 </head>
+
 <body>
-<div class="card" id="game">
-  <div class="center">
+<div id="start">
+  <div class="card">
     <div>🔬 SCIENCE AR QUEST</div>
-    <div class="title">Mission 01</div>
-    <h2 class="lime">วิทยาศาสตร์ ม.ต้น</h2>
-    <p>ภารกิจ: วิเคราะห์หลักฐานเพื่อจำแนก “การเปลี่ยนแปลงปริศนา”</p>
+    <h1>วิทยาศาสตร์ ม.ต้น</h1>
+    <h2>การเปลี่ยนแปลงปริศนา</h2>
+    <p>สแกนโปสเตอร์ Mission 01 แล้วรวบรวมหลักฐาน 3 อย่าง เพื่อวิเคราะห์ว่าการเปลี่ยนแปลงที่เกิดขึ้นเป็นชนิดใด</p>
+    <button class="btn" id="startBtn">เริ่มภารกิจ</button>
+    <button class="btn secondary" onclick="location.href='./mission-map.html'">ดูแผนที่ภารกิจ</button>
   </div>
+</div>
 
-  <div class="clue" data-n="1"><b>🔎 หลักฐานที่ 1</b><span>แตะเพื่อเปิดข้อมูล</span></div>
-  <div class="clue" data-n="2"><b>🔎 หลักฐานที่ 2</b><span>แตะเพื่อเปิดข้อมูล</span></div>
-  <div class="clue" data-n="3"><b>🔎 หลักฐานที่ 3</b><span>แตะเพื่อเปิดข้อมูล</span></div>
+<div id="hud"><div id="status"><span class="ok">กำลังเปิดกล้อง…</span><br><span class="small">กรุณารอสักครู่</span></div></div>
 
-  <div class="question" id="question">
-    <h3>🧠 จากหลักฐานทั้งหมด เหตุการณ์นี้ควรจัดเป็นอะไร?</h3>
+<div id="mission">
+  <h3>🔎 รวบรวมหลักฐาน 3 อย่าง</h3>
+  <div class="small">แตะเพื่อเปิดข้อมูลทีละข้อ</div>
+
+  <button class="clue" data-n="1">หลักฐานที่ 1</button>
+  <button class="clue" data-n="2">หลักฐานที่ 2</button>
+  <button class="clue" data-n="3">หลักฐานที่ 3</button>
+
+  <div id="question">
+    <h3>🧠 วิเคราะห์ผล</h3>
+    <div>จากหลักฐานทั้งหมด เหตุการณ์นี้ควรจัดเป็นการเปลี่ยนแปลงชนิดใด?</div>
     <button class="answer" data-a="physical">การเปลี่ยนแปลงทางกายภาพ</button>
     <button class="answer" data-a="chemical">การเปลี่ยนแปลงทางเคมี</button>
     <button class="answer" data-a="both">เป็นทั้งกายภาพและเคมี</button>
     <button class="answer" data-a="unknown">ยังสรุปไม่ได้จากข้อมูล</button>
-    <div class="feedback" id="feedback"></div>
-  </div>
-
-  <div class="center">
-    <a class="btn secondary" href="./mission-map.html">🗺 กลับสู่แผนที่ภารกิจ</a>
+    <div id="feedback"></div>
   </div>
 </div>
 
-<div class="card" id="success">
-  <div class="fragment">🔵</div>
-  <h1>ภารกิจสำเร็จ!</h1>
-  <h2 class="lime">ได้รับชิ้นส่วนแห่งการค้นพบ</h2>
-  <p><b>DISCOVERY FRAGMENT</b></p>
-  <p class="small">ระบบบันทึกสถานะภารกิจวิทยาศาสตร์ ม.ต้น แล้ว</p>
-  <a class="btn" href="./mission-map.html">🗺 ดูแผนที่ภารกิจ</a>
+<div id="success">
+  <div class="card">
+    <div class="fragment">🔵</div>
+    <h1>ภารกิจสำเร็จ!</h1>
+    <h2>ได้รับชิ้นส่วนแห่งการค้นพบ</h2>
+    <p><b>DISCOVERY FRAGMENT</b></p>
+    <div class="progress">Science Core: <span id="progressText">1 / 5</span></div>
+    <p class="small">ระบบบันทึกสถานะภารกิจวิทยาศาสตร์ ม.ต้น เรียบร้อยแล้ว</p>
+    <button class="btn" onclick="location.href='./mission-map.html'">🗺 ดูแผนที่ภารกิจ</button>
+  </div>
 </div>
+
+<a-scene id="scene"
+  mindar-image="imageTargetSrc: ./science-targets.mind; autoStart:false; uiLoading:no; uiScanning:no; uiError:no; filterMinCF:0.001; filterBeta:0.01;"
+  color-space="sRGB"
+  renderer="alpha:true;colorManagement:true;physicallyCorrectLights:true"
+  vr-mode-ui="enabled:false"
+  device-orientation-permission-ui="enabled:false"
+  embedded>
+
+  <a-camera position="0 0 0" look-controls="enabled:false"></a-camera>
+
+  <a-entity id="target" mindar-image-target="targetIndex:0">
+    <a-ring position="0 0 0.08" radius-inner="0.28" radius-outer="0.31" color="#67D8FF"
+      animation="property:rotation;to:0 0 360;loop:true;dur:4500;easing:linear"></a-ring>
+    <a-circle position="0 0 0.075" radius="0.21" color="#123F52" opacity="0.82"></a-circle>
+    <a-text value="SCIENCE\nSIGNAL" align="center" color="#FFFFFF" width="1.15" position="0 0.025 0.09"></a-text>
+    <a-sphere radius="0.05" position="0 -0.17 0.11" color="#67D8FF"
+      animation="property:scale;to:1.5 1.5 1.5;dir:alternate;loop:true;dur:650"></a-sphere>
+  </a-entity>
+</a-scene>
 
 <script>
-const clues = {
-  1: 'เมื่อให้ความร้อน สารตัวอย่างเปลี่ยนสีอย่างถาวร',
-  2: 'ตรวจพบแก๊สเกิดขึ้นระหว่างกระบวนการ',
-  3: 'หลังสิ้นสุดกระบวนการ ไม่สามารถทำให้สารกลับสู่สภาพเดิมด้วยวิธีง่าย ๆ'
-};
-const opened = new Set();
+const scene=document.querySelector('#scene');
+const target=document.querySelector('#target');
+const start=document.querySelector('#start');
+const hud=document.querySelector('#hud');
+const status=document.querySelector('#status');
+const mission=document.querySelector('#mission');
+const success=document.querySelector('#success');
+const question=document.querySelector('#question');
+const feedback=document.querySelector('#feedback');
+let opened=new Set();
 
-document.querySelectorAll('.clue').forEach(el=>{
-  el.addEventListener('click',()=>{
-    const n=el.dataset.n;
+function setStatus(main,sub=''){
+  status.innerHTML=`<span class="ok">${main}</span>${sub?`<br><span class="small">${sub}</span>`:''}`;
+}
+
+async function forceVideo(){
+  for(let i=0;i<35;i++){
+    const v=document.querySelector('video');
+    if(v){
+      v.setAttribute('playsinline','');
+      v.setAttribute('webkit-playsinline','');
+      v.muted=true;
+      Object.assign(v.style,{position:'fixed',inset:'0',width:'100vw',height:'100vh',objectFit:'cover',display:'block',visibility:'visible',opacity:'1',zIndex:'0'});
+      return true;
+    }
+    await new Promise(r=>setTimeout(r,180));
+  }
+  return false;
+}
+
+document.querySelector('#startBtn').addEventListener('click',async()=>{
+  start.style.display='none';
+  hud.style.display='block';
+  setStatus('กำลังเปิดกล้อง…','กรุณารอสักครู่');
+  try{
+    await scene.systems['mindar-image-system'].start();
+    await forceVideo();
+    setStatus('กล้องพร้อมใช้งาน ✓','หันกล้องไปยังโปสเตอร์วิทยาศาสตร์ ม.ต้น');
+  }catch(e){
+    setStatus('เปิดกล้องไม่สำเร็จ','ตรวจสอบสิทธิ์การใช้กล้อง');
+  }
+});
+
+target.addEventListener('targetFound',()=>{
+  setStatus('✓ พบโปสเตอร์วิทยาศาสตร์ ม.ต้น','เริ่มรวบรวมหลักฐานได้เลย');
+  mission.style.display='block';
+});
+target.addEventListener('targetLost',()=>{
+  if(success.style.display!=='flex'){
+    setStatus('หลุดจากโปสเตอร์','หันกล้องกลับไปยังโปสเตอร์');
+  }
+});
+
+const clues={
+  1:'🔎 หลักฐานที่ 1: เมื่อให้ความร้อน สารตัวอย่างเปลี่ยนสีอย่างถาวร',
+  2:'🔎 หลักฐานที่ 2: ตรวจพบแก๊สเกิดขึ้นระหว่างกระบวนการ',
+  3:'🔎 หลักฐานที่ 3: หลังสิ้นสุดกระบวนการ ไม่สามารถทำให้สารกลับสู่สภาพเดิมได้ด้วยวิธีง่าย ๆ'
+};
+
+document.querySelectorAll('.clue').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    const n=btn.dataset.n;
     opened.add(n);
-    el.classList.add('done');
-    el.querySelector('span').textContent = clues[n];
-    if(opened.size===3) document.querySelector('#question').style.display='block';
+    btn.classList.add('done');
+    btn.textContent=clues[n];
+    if(opened.size===3) question.style.display='block';
   });
 });
 
 document.querySelectorAll('.answer').forEach(btn=>{
   btn.addEventListener('click',()=>{
     document.querySelectorAll('.answer').forEach(b=>b.classList.remove('wrong','correct'));
-    const fb=document.querySelector('#feedback');
     if(btn.dataset.a==='chemical'){
       btn.classList.add('correct');
-      fb.style.color='#b7ff62';
-      fb.textContent='✓ ถูกต้อง: การเปลี่ยนสีถาวร การเกิดแก๊ส และการย้อนกลับได้ยาก เป็นหลักฐานของการเกิดสารใหม่';
+      feedback.style.color='#8ee7ff';
+      feedback.textContent='✓ ถูกต้อง: การเปลี่ยนสีถาวร การเกิดแก๊ส และการย้อนกลับได้ยาก เป็นหลักฐานที่สนับสนุนการเกิดสารใหม่';
       localStorage.setItem('scienceAR_science','complete');
+
+      const keys=['science','biology','physics','chemistry','earth'];
+      const count=keys.filter(k=>localStorage.getItem('scienceAR_'+k)==='complete').length;
+      document.querySelector('#progressText').textContent=`${count} / 5`;
+
       setTimeout(()=>{
-        document.querySelector('#game').style.display='none';
-        document.querySelector('#success').style.display='block';
-      },700);
+        mission.style.display='none';
+        success.style.display='flex';
+      },650);
     }else{
       btn.classList.add('wrong');
-      fb.style.color='#ff9b9b';
-      fb.textContent='ยังไม่ถูก ลองพิจารณาว่า “มีหลักฐานการเกิดสารใหม่” หรือไม่';
+      feedback.style.color='#ff9b9b';
+      feedback.textContent='ยังไม่ถูก ลองพิจารณาว่ามีหลักฐานของ “การเกิดสารใหม่” หรือไม่';
     }
   });
 });
+
+scene.addEventListener('arReady',forceVideo);
+window.addEventListener('resize',forceVideo);
 </script>
 </body>
 </html>
