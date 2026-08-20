@@ -117,7 +117,7 @@
   </div>
 </div>
 
-<div id="map">
+<div id="map" style="display:none!important">
   <div class="card">
     <h1>แผนที่ภารกิจ</h1>
     <p>รวบรวมชิ้นส่วนให้ครบทั้ง 5 ภาควิชา</p>
@@ -252,8 +252,8 @@ document.querySelectorAll('.answer').forEach(btn=>{
   });
 });
 
-function openMap(){updateMap();map.style.display='flex';success.style.display='none';start.style.display='none';missionPanel.style.display='none'}
-$('#mapBtnStart').addEventListener('click',()=>{start.style.display='none';openMap()});
+function openMap(){ window.location.href='./mission-map.html'; }
+$('#mapBtnStart').addEventListener('click',openMap);
 $('#mapBtnSuccess').addEventListener('click',openMap);
 $('#closeSuccess').addEventListener('click',()=>{success.style.display='none';if(foundTarget)missionPanel.style.display='block'});
 $('#backFromMap').addEventListener('click',()=>{
