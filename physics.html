@@ -39,7 +39,8 @@ p{line-height:1.55;color:#e3f2f8}
 #success{display:none;position:fixed;inset:0;z-index:50;align-items:center;justify-content:center;padding:20px;background:rgba(2,13,12,.92)}
 .fragment{font-size:72px;filter:drop-shadow(0 0 24px #c66cff)}
 .progress{margin:12px auto;padding:10px 14px;border-radius:14px;background:#28143c;border:1px solid #8754a8;font-weight:800}
-#scanHint{display:none;position:fixed;z-index:20;left:50%;top:52%;transform:translate(-50%,-50%);width:min(68vw,420px);aspect-ratio:1;border:3px solid rgba(255,216,77,.85);border-radius:22px;pointer-events:none}\n</style>
+#scanHint{display:none;position:fixed;z-index:20;left:50%;top:52%;transform:translate(-50%,-50%);width:min(68vw,420px);aspect-ratio:1;border:3px solid rgba(255,216,77,.85);border-radius:22px;pointer-events:none}
+</style>
 </head>
 
 <body>
@@ -56,7 +57,9 @@ p{line-height:1.55;color:#e3f2f8}
 
 <div id="hud"><div id="status"><span class="ok">กำลังเปิดกล้อง…</span><br><span class="small">กรุณารอสักครู่</span></div></div>
 
-<div id="scanHint"></div>\n\n<div id="mission">
+<div id="scanHint"></div>
+
+<div id="mission">
   <h3>⚡ รวบรวมหลักฐาน 3 ข้อ</h3>
   <div class="small">แตะเพื่อเปิดข้อมูลทีละข้อ แล้วใช้หลักฟิสิกส์วิเคราะห์ปัญหา</div>
 
@@ -98,11 +101,11 @@ p{line-height:1.55;color:#e3f2f8}
   <a-camera position="0 0 0" look-controls="enabled:false"></a-camera>
 
   <a-entity id="target" mindar-image-target="targetIndex:0">
-    <a-ring position="0 0 0.08" radius-inner="0.28" radius-outer="0.31" color="#67D8FF"
+    <a-ring position="0 0 0.08" radius-inner="0.28" radius-outer="0.31" color="#C66CFF"
       animation="property:rotation;to:0 0 360;loop:true;dur:4500;easing:linear"></a-ring>
     <a-circle position="0 0 0.075" radius="0.21" color="#24113B" opacity="0.82"></a-circle>
     <a-text value="ENERGY\nCORE" align="center" color="#FFFFFF" width="1.15" position="0 0.025 0.09"></a-text>
-    <a-sphere radius="0.05" position="0 -0.17 0.11" color="#67D8FF"
+    <a-sphere radius="0.05" position="0 -0.17 0.11" color="#C66CFF"
       animation="property:scale;to:1.5 1.5 1.5;dir:alternate;loop:true;dur:650"></a-sphere>
   </a-entity>
 </a-scene>
@@ -116,7 +119,8 @@ const status=document.querySelector('#status');
 const mission=document.querySelector('#mission');
 const success=document.querySelector('#success');
 const question=document.querySelector('#question');
-const feedback=document.querySelector('#feedback');\nconst scanHint=document.querySelector('#scanHint');
+const feedback=document.querySelector('#feedback');
+const scanHint=document.querySelector('#scanHint');
 let opened=new Set();
 
 function setStatus(main,sub=''){
@@ -138,26 +142,46 @@ async function forceVideo(){
   return false;
 }
 
+async function waitForMindAR(){
+  for(let i=0;i<80;i++){
+    const sys=scene.systems && scene.systems['mindar-image-system'];
+    if(sys && typeof sys.start==='function') return sys;
+    await new Promise(r=>setTimeout(r,100));
+  }
+  throw new Error('MindAR ยังไม่พร้อม');
+}
+
 document.querySelector('#startBtn').addEventListener('click',async()=>{
+  const startBtn=document.querySelector('#startBtn');
+  startBtn.disabled=true;
   start.style.display='none';
-  hud.style.display='block';\n  scanHint.style.display='block';
+  hud.style.display='block';
+  scanHint.style.display='block';
   setStatus('กำลังเปิดกล้อง…','กรุณารอสักครู่');
   try{
-    await scene.systems['mindar-image-system'].start();
+    const sys=await waitForMindAR();
+    await sys.start();
     await forceVideo();
     setStatus('กล้องพร้อมใช้งาน ✓','หันกล้องไปยังสัญลักษณ์ PHY 03 บนโปสเตอร์ฟิสิกส์');
   }catch(e){
-    setStatus('เปิดกล้องไม่สำเร็จ','ตรวจสอบสิทธิ์การใช้กล้อง');
+    console.error(e);
+    start.style.display='flex';
+    hud.style.display='none';
+    scanHint.style.display='none';
+    startBtn.disabled=false;
+    alert('เปิดกล้องไม่สำเร็จ กรุณาตรวจสอบสิทธิ์กล้อง แล้วลองใหม่');
   }
 });
 
-target.addEventListener('targetFound',()=>{\n  scanHint.style.display='none';
+target.addEventListener('targetFound',()=>{
+  scanHint.style.display='none';
   setStatus('✓ พบโปสเตอร์ฟิสิกส์ Mission 03','เริ่มรวบรวมหลักฐานเพื่อกู้ระบบพลังงาน');
   mission.style.display='block';
 });
 target.addEventListener('targetLost',()=>{
   if(success.style.display!=='flex'){
-    setStatus('หลุดจากสัญลักษณ์ PHY 03','หันกล้องกลับไปยัง Target บนโปสเตอร์');\n    scanHint.style.display='block';
+    setStatus('หลุดจากสัญลักษณ์ PHY 03','หันกล้องกลับไปยัง Target บนโปสเตอร์');
+    scanHint.style.display='block';
   }
 });
 
