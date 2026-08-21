@@ -4,106 +4,331 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#030713">
-<title>Science AR Quest — Final Mission</title>
+<title>Science AR Quest — ภารกิจสุดท้าย</title>
 <style>
 *{box-sizing:border-box}
-html,body{margin:0;min-height:100%;font-family:"Leelawadee UI","Tahoma","Noto Sans Thai",system-ui,sans-serif;color:#fff;background:#030713}
-body{min-height:100vh;overflow-x:hidden;background:radial-gradient(circle at 50% 40%,#102b4a 0,#080c22 38%,#030713 76%)}
-.stars,.stars:before,.stars:after{position:fixed;inset:0;content:"";pointer-events:none;background-image:radial-gradient(#fff 1px,transparent 1px);background-size:39px 39px;opacity:.22;animation:drift 18s linear infinite}
-.stars:before{background-size:71px 71px;opacity:.2;animation-duration:28s}
-.stars:after{background-size:113px 113px;opacity:.3;animation-duration:40s}
+html,body{
+  margin:0;min-height:100%;
+  font-family:"Leelawadee UI","Tahoma","Noto Sans Thai",system-ui,-apple-system,sans-serif;
+  color:#fff;background:#030713
+}
+body{
+  min-height:100vh;overflow-x:hidden;
+  background:
+    radial-gradient(circle at 50% 42%,#102b4a 0,#080c22 38%,#030713 76%)
+}
+.stars,.stars:before,.stars:after{
+  position:fixed;inset:0;content:"";pointer-events:none;
+  background-image:radial-gradient(#fff 1px,transparent 1px);
+  background-size:39px 39px;opacity:.22;animation:drift 18s linear infinite
+}
+.stars:before{background-size:71px 71px;opacity:.18;animation-duration:28s}
+.stars:after{background-size:113px 113px;opacity:.28;animation-duration:40s}
 @keyframes drift{to{transform:translateY(90px)}}
-.wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:22px}
-.card{position:relative;width:min(94vw,760px);padding:30px 22px;border-radius:30px;text-align:center;background:#081326df;border:1px solid #6fe9ff66;box-shadow:0 20px 90px #000b,0 0 50px #68eaff18;backdrop-filter:blur(14px);overflow:hidden}
-.kicker{display:inline-block;padding:8px 13px;border:1px solid #70e8ff66;border-radius:999px;color:#bff7ff;background:#0b2638aa;font-size:13px;font-weight:900;letter-spacing:.1em}
-h1{font-size:clamp(38px,9vw,65px);line-height:1.05;margin:.28em 0 .12em}
-.gradient{background:linear-gradient(90deg,#b7ff37,#69eeff,#c38bff);-webkit-background-clip:text;background-clip:text;color:transparent}
-.intro{line-height:1.6;color:#d7e9f0;max-width:580px;margin:12px auto 20px}
-.stage{position:relative;width:min(78vw,430px);height:min(78vw,430px);max-height:430px;margin:8px auto 18px}
-.core{position:absolute;left:50%;top:50%;width:110px;height:110px;transform:translate(-50%,-50%);border-radius:50%;display:grid;place-items:center;font-weight:950;letter-spacing:.06em;background:radial-gradient(circle,#dfffff,#68efff 18%,#725cff 48%,#172044 70%);box-shadow:0 0 28px #78eeff88,0 0 80px #815eff55;transition:1s;z-index:4}
-.ring{position:absolute;inset:15%;border:1px solid #75eaff55;border-radius:50%;animation:spin 8s linear infinite}
-.ring.r2{inset:7%;border-style:dashed;animation-direction:reverse;animation-duration:12s}
+
+.wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+.card{
+  position:relative;width:min(94vw,760px);padding:28px 20px;border-radius:30px;text-align:center;
+  background:linear-gradient(155deg,#071326e8,#0a1329e8 55%,#08182be8);
+  border:1px solid #6fe9ff66;
+  box-shadow:0 20px 90px #000b,0 0 50px #68eaff18;
+  backdrop-filter:blur(14px);overflow:hidden
+}
+.kicker{
+  display:inline-block;padding:8px 14px;border:1px solid #70e8ff66;border-radius:999px;
+  color:#bff7ff;background:#0b2637aa;font-size:13px;font-weight:900;letter-spacing:.08em
+}
+h1{font-size:clamp(38px,9vw,64px);line-height:1.07;margin:.28em 0 .12em}
+.gradient{
+  background:linear-gradient(90deg,#b7ff37,#69eeff,#c38bff);
+  -webkit-background-clip:text;background-clip:text;color:transparent
+}
+.intro{line-height:1.65;color:#d7e9f0;max-width:610px;margin:12px auto 18px}
+.statusText{font-size:14px;color:#9defff;min-height:23px;margin-bottom:5px;font-weight:800}
+
+/* MERGE STAGE */
+.stage{
+  position:relative;width:min(84vw,470px);height:min(84vw,470px);
+  max-height:470px;margin:4px auto 16px
+}
+.ring{
+  position:absolute;inset:17%;border:1px solid #75eaff55;border-radius:50%;
+  animation:spin 8s linear infinite
+}
+.ring.r2{inset:8%;border-style:dashed;animation-direction:reverse;animation-duration:13s}
+.ring.r3{inset:28%;border-color:#c88cff50;animation-duration:5s}
 @keyframes spin{to{transform:rotate(360deg)}}
-.frag{position:absolute;width:64px;height:64px;border-radius:50%;display:grid;place-items:center;font-size:34px;background:#ffffff12;border:1px solid #ffffff38;box-shadow:0 0 22px #8ceeff2a;transition:1.4s cubic-bezier(.2,.8,.2,1);z-index:5}
-.f1{left:50%;top:2%;transform:translateX(-50%)} .f2{right:3%;top:34%}.f3{right:19%;bottom:3%}.f4{left:19%;bottom:3%}.f5{left:3%;top:34%}
-.stage.merging .frag{left:50%;top:50%;right:auto;bottom:auto;transform:translate(-50%,-50%) scale(.15);opacity:0}
-.stage.merging .core{transform:translate(-50%,-50%) scale(1.25);box-shadow:0 0 45px #fff,0 0 120px #76efff,0 0 190px #9c68ff}
-.flash{position:fixed;inset:0;background:#dfffff;opacity:0;pointer-events:none;z-index:50}
+
+.core{
+  position:absolute;left:50%;top:50%;width:118px;height:118px;
+  transform:translate(-50%,-50%);border-radius:50%;display:grid;place-items:center;
+  font-weight:950;font-size:14px;line-height:1.15;letter-spacing:.05em;
+  background:radial-gradient(circle,#ecffff,#69efff 18%,#6b63ff 48%,#172044 70%);
+  box-shadow:0 0 30px #78eeff88,0 0 80px #815eff55;
+  z-index:6;transition:transform .8s,box-shadow .8s,filter .8s
+}
+.core::after{
+  content:"";position:absolute;inset:-16px;border:1px solid #8ff5ff80;border-radius:50%;
+  animation:corePulse 1.3s ease-in-out infinite alternate
+}
+@keyframes corePulse{to{transform:scale(1.12);opacity:.25}}
+
+.frag{
+  position:absolute;width:76px;height:76px;border-radius:20px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  font-size:31px;font-weight:900;
+  background:linear-gradient(145deg,#ffffff18,#ffffff09);
+  border:1px solid #ffffff38;box-shadow:0 0 24px #8ceeff2a;
+  z-index:7;transition:
+    left 1.05s cubic-bezier(.2,.8,.2,1),
+    top 1.05s cubic-bezier(.2,.8,.2,1),
+    right 1.05s cubic-bezier(.2,.8,.2,1),
+    bottom 1.05s cubic-bezier(.2,.8,.2,1),
+    transform 1.05s cubic-bezier(.2,.8,.2,1),
+    opacity .6s,box-shadow .6s
+}
+.frag small{font-size:9px;letter-spacing:.04em;color:#e8f5ff;margin-top:2px}
+.f1{left:50%;top:0;transform:translateX(-50%);box-shadow:0 0 28px #58d9ff55}
+.f2{right:0;top:34%;box-shadow:0 0 28px #6cff8b44}
+.f3{right:17%;bottom:0;box-shadow:0 0 28px #ffd65c44}
+.f4{left:17%;bottom:0;box-shadow:0 0 28px #d272ff55}
+.f5{left:0;top:34%;box-shadow:0 0 28px #5fa5ff55}
+
+.frag.absorb{
+  left:50%!important;top:50%!important;right:auto!important;bottom:auto!important;
+  transform:translate(-50%,-50%) scale(.05)!important;opacity:0;
+  box-shadow:0 0 60px #fff
+}
+.stage.charged .core{
+  transform:translate(-50%,-50%) scale(1.38);
+  box-shadow:0 0 55px #fff,0 0 130px #76efff,0 0 210px #9c68ff;
+  filter:brightness(1.45)
+}
+.energy-wave{
+  position:absolute;left:50%;top:50%;width:120px;height:120px;border-radius:50%;
+  transform:translate(-50%,-50%) scale(.2);border:3px solid #dfffff;
+  opacity:0;z-index:5
+}
+.energy-wave.go{animation:wave 1.25s ease-out forwards}
+@keyframes wave{
+  0%{opacity:1;transform:translate(-50%,-50%) scale(.3)}
+  100%{opacity:0;transform:translate(-50%,-50%) scale(3.2)}
+}
+.flash{position:fixed;inset:0;background:#e9ffff;opacity:0;pointer-events:none;z-index:50}
 .flash.go{animation:flash .9s ease}
-@keyframes flash{0%,100%{opacity:0}40%{opacity:.82}}
-.btn{border:0;border-radius:999px;padding:15px 22px;min-width:245px;font-size:17px;font-weight:900;cursor:pointer;text-decoration:none;display:inline-block}
-.primary{background:linear-gradient(90deg,#b7ff37,#70f0bc);color:#06180d;box-shadow:0 10px 34px #8aff5b2c}
-.transmission{display:none;margin:10px auto 0;max-width:650px;text-align:left;border:1px solid #6ceaff77;border-radius:22px;background:#061424e8;box-shadow:inset 0 0 35px #52dfff0e;padding:20px}
-.transmission.show{display:block;animation:signal .6s steps(2)}
-@keyframes signal{0%{opacity:.2;transform:translateX(-4px)}30%{opacity:1;transform:translateX(3px)}100%{transform:none}}
-.signal{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;color:#75efff;font-size:13px;letter-spacing:.08em;margin-bottom:13px}
-.line{opacity:0;transform:translateY(6px);transition:.5s;margin:9px 0;line-height:1.65;color:#dcecf2}
-.line.show{opacity:1;transform:none}
-.big{text-align:center;font-size:clamp(27px,7vw,44px);font-weight:950;color:#b7ff62}
-.school{text-align:center;padding:13px;margin:14px 0;border-radius:16px;background:#ffffff09;border:1px solid #ffffff16}
-.nextyear{text-align:center;font-size:clamp(22px,6vw,34px);font-weight:950;color:#c999ff;text-shadow:0 0 22px #b26cff66}
-.home{display:none;text-align:center;margin-top:18px}.home.show{display:block}
+@keyframes flash{0%,100%{opacity:0}42%{opacity:.9}}
+
+.btn{
+  border:0;border-radius:999px;padding:15px 22px;min-width:245px;font-size:17px;
+  font-weight:900;cursor:pointer;text-decoration:none;display:inline-block
+}
+.primary{
+  background:linear-gradient(90deg,#b7ff37,#70f0bc);color:#06180d;
+  box-shadow:0 10px 34px #8aff5b2c
+}
+.primary:disabled{opacity:.45;cursor:default}
 .secondary{background:#10283dcc;color:#fff;border:1px solid #75ddff88}
+
+/* COMPLETE / TRANSMISSION */
+.transmission{
+  display:none;margin:10px auto 0;max-width:660px;text-align:left;
+  border:1px solid #6ceaff77;border-radius:24px;
+  background:linear-gradient(160deg,#061424ef,#07172aef);
+  box-shadow:inset 0 0 35px #52dfff0e,0 0 36px #65e8ff10;
+  padding:21px
+}
+.transmission.show{display:block;animation:signalIn .65s steps(2)}
+@keyframes signalIn{
+  0%{opacity:.2;transform:translateX(-4px)}
+  30%{opacity:1;transform:translateX(3px)}
+  100%{transform:none}
+}
+.signal{
+  font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+  color:#75efff;font-size:13px;letter-spacing:.08em;margin-bottom:14px
+}
+.line{
+  opacity:0;transform:translateY(7px);transition:.5s;
+  margin:10px 0;line-height:1.7;color:#dcecf2
+}
+.line.show{opacity:1;transform:none}
+.big{
+  text-align:center;font-size:clamp(36px,9vw,58px);
+  font-weight:950;color:#b7ff62;letter-spacing:.03em
+}
+.thaiComplete{
+  text-align:center;font-size:clamp(20px,5vw,27px);
+  font-weight:900;color:#eefcff
+}
+.school{
+  text-align:center;padding:20px 15px;margin:20px 0;border-radius:20px;
+  background:
+    linear-gradient(145deg,#18351f,#173629 55%,#132d34);
+  border:2px solid #b7ff62;
+  box-shadow:0 0 28px #b7ff6230,inset 0 0 24px #b7ff620d;
+  color:#f5ffe9
+}
+.school .thanks{
+  font-size:clamp(19px,5vw,25px);font-weight:950;color:#dfffb9;
+  margin-bottom:8px
+}
+.school .eventname{
+  font-size:clamp(21px,5.5vw,29px);font-weight:950;line-height:1.45
+}
+.school .schoolname{
+  font-size:clamp(24px,6vw,34px);font-weight:950;
+  color:#ffffff;margin:7px 0
+}
+.school .year{
+  display:inline-block;margin-top:6px;padding:6px 13px;border-radius:999px;
+  background:#b7ff6217;border:1px solid #b7ff6266;font-weight:900
+}
+.nextyear{
+  text-align:center;font-size:clamp(24px,6.3vw,36px);
+  font-weight:950;color:#d19cff;text-shadow:0 0 24px #b26cff77
+}
+.home{display:none;text-align:center;margin-top:19px}
+.home.show{display:block}
 .hidden{display:none!important}
+
+@media (max-width:480px){
+  .card{padding:24px 16px}
+  .frag{width:68px;height:68px;font-size:28px}
+  .core{width:104px;height:104px;font-size:13px}
+}
 </style>
 </head>
 <body>
-<div class="stars"></div><div class="flash" id="flash"></div>
+<div class="stars"></div>
+<div class="flash" id="flash"></div>
+
 <div class="wrap">
 <main class="card">
-  <div class="kicker">🚀 SCIENCE AR QUEST • FINAL MISSION</div>
-  <h1 id="title">รวมพลัง <span class="gradient">SCIENCE CORE</span></h1>
-  <p class="intro" id="intro">ชิ้นส่วนทั้ง 5 พร้อมแล้ว กดรวมพลังเพื่อกู้คืน SCIENCE CORE และส่งสัญญาณกลับสู่ศูนย์บัญชาการ</p>
+  <div class="kicker">🚀 SCIENCE AR QUEST • ภารกิจสุดท้าย</div>
 
-  <div class="stage" id="stage">
-    <div class="ring"></div><div class="ring r2"></div>
-    <div class="core">SCIENCE<br>CORE</div>
-    <div class="frag f1">🔬</div><div class="frag f2">🧬</div><div class="frag f3">⚡</div><div class="frag f4">⚗️</div><div class="frag f5">🌎</div>
-  </div>
+  <section id="mergeScreen">
+    <h1>รวมพลัง <span class="gradient">SCIENCE CORE</span></h1>
+    <p class="intro">
+      ชิ้นส่วนทั้ง 5 พร้อมแล้ว<br>
+      กดปุ่มด้านล่างเพื่อรวมพลังและส่งสัญญาณกลับสู่ศูนย์บัญชาการ
+    </p>
+    <div class="statusText" id="statusText">พร้อมรวมชิ้นส่วนทั้ง 5</div>
 
-  <button class="btn primary" id="mergeBtn">✨ รวมพลัง SCIENCE CORE</button>
+    <div class="stage" id="stage">
+      <div class="ring"></div>
+      <div class="ring r2"></div>
+      <div class="ring r3"></div>
+      <div class="energy-wave" id="wave"></div>
 
-  <section class="transmission" id="transmission">
-    <div class="signal">📡 INCOMING TRANSMISSION • SIGNAL LOCKED</div>
-    <div class="line">รับสัญญาณจากศูนย์บัญชาการ...</div>
-    <div class="line big">SCIENCE CORE RESTORED ✓</div>
-    <div class="line big">MISSION COMPLETE</div>
-    <div class="line" style="text-align:center">ภารกิจสำเร็จ! นักสำรวจได้รวบรวมชิ้นส่วน SCIENCE CORE ครบทั้ง 5 ชิ้น และเสร็จสิ้นภารกิจการสำรวจเรียบร้อยแล้ว</div>
-    <div class="line school"><b>ขอบคุณที่ร่วมเป็นส่วนหนึ่งของ<br>กิจกรรมสัปดาห์วิทยาศาสตร์<br>โรงเรียนกันทรลักษ์วิทยา<br>ประจำปีการศึกษา 2569</b></div>
-    <div class="line" style="text-align:center">การสำรวจในครั้งนี้สิ้นสุดลงแล้ว<br>แต่การค้นพบครั้งใหม่กำลังรอคุณอยู่...</div>
-    <div class="line nextyear">🌌 แล้วพบกันใหม่ ปีการศึกษา 2570</div>
-    <div class="line signal" style="text-align:center;margin-top:18px">TRANSMISSION ENDED • SEE YOU AGAIN, EXPLORER 🚀</div>
+      <div class="core">SCIENCE<br>CORE</div>
+
+      <div class="frag f1" data-label="การค้นพบ">🔬<small>การค้นพบ</small></div>
+      <div class="frag f2" data-label="ชีวิต">🧬<small>ชีวิต</small></div>
+      <div class="frag f3" data-label="พลังงาน">⚡<small>พลังงาน</small></div>
+      <div class="frag f4" data-label="สสาร">⚗️<small>สสาร</small></div>
+      <div class="frag f5" data-label="จักรวาล">🌎<small>จักรวาล</small></div>
+    </div>
+
+    <button class="btn primary" id="mergeBtn">✨ รวมชิ้นส่วนทั้ง 5</button>
   </section>
 
-  <div class="home" id="home"><a class="btn secondary" href="./index.html">⌂ กลับสู่หน้าหลัก</a></div>
+  <section class="transmission" id="transmission">
+    <div class="signal">📡 รับสัญญาณจากศูนย์บัญชาการ • เชื่อมต่อสำเร็จ</div>
+
+    <div class="line">ตรวจพบการรวมพลังของชิ้นส่วนทั้ง 5...</div>
+
+    <div class="line big">MISSION COMPLETE</div>
+
+    <div class="line thaiComplete">
+      ภารกิจสำเร็จ! นักสำรวจได้รวบรวมชิ้นส่วนครบทั้ง 5 ชิ้น
+      และเสร็จสิ้นการสำรวจเรียบร้อยแล้ว
+    </div>
+
+    <div class="line school">
+      <div class="thanks">ขอบคุณที่ร่วมเป็นส่วนหนึ่งของ</div>
+      <div class="eventname">กิจกรรมสัปดาห์วิทยาศาสตร์</div>
+      <div class="schoolname">โรงเรียนกันทรลักษ์วิทยา</div>
+      <div class="year">ประจำปีการศึกษา 2569</div>
+    </div>
+
+    <div class="line" style="text-align:center">
+      การสำรวจในครั้งนี้สิ้นสุดลงแล้ว<br>
+      แต่การค้นพบครั้งใหม่กำลังรอคุณอยู่...
+    </div>
+
+    <div class="line nextyear">🌌 แล้วพบกันใหม่ ปีการศึกษา 2570</div>
+
+    <div class="line signal" style="text-align:center;margin-top:19px">
+      📡 สิ้นสุดการส่งสัญญาณ • แล้วพบกันใหม่ นักสำรวจ 🚀
+    </div>
+  </section>
+
+  <div class="home" id="home">
+    <a class="btn secondary" href="./index.html">⌂ กลับสู่หน้าหลัก</a>
+  </div>
 </main>
 </div>
 
 <script>
-const stage=document.querySelector('#stage'), mergeBtn=document.querySelector('#mergeBtn');
-const transmission=document.querySelector('#transmission'), flash=document.querySelector('#flash');
-const home=document.querySelector('#home'), title=document.querySelector('#title'), intro=document.querySelector('#intro');
+const mergeScreen=document.querySelector('#mergeScreen');
+const stage=document.querySelector('#stage');
+const mergeBtn=document.querySelector('#mergeBtn');
+const statusText=document.querySelector('#statusText');
+const fragments=[...document.querySelectorAll('.frag')];
+const wave=document.querySelector('#wave');
+const flash=document.querySelector('#flash');
+const transmission=document.querySelector('#transmission');
+const home=document.querySelector('#home');
 
-function revealTransmission(){
-  stage.classList.add('hidden'); title.classList.add('hidden'); intro.classList.add('hidden');
+function showTransmission(){
+  mergeScreen.classList.add('hidden');
   transmission.classList.add('show');
-  const lines=[...transmission.querySelectorAll('.line')];
-  lines.forEach((el,i)=>setTimeout(()=>el.classList.add('show'),350+i*650));
-  setTimeout(()=>home.classList.add('show'),350+lines.length*650);
-}
-function completeMission(){
-  localStorage.setItem('scienceAR_final','complete');
-  mergeBtn.classList.add('hidden');
-  stage.classList.add('merging');
-  setTimeout(()=>flash.classList.add('go'),1700);
-  setTimeout(()=>revealTransmission(),2300);
-}
-mergeBtn.addEventListener('click',completeMission);
 
-if(localStorage.getItem('scienceAR_final')==='complete'){
-  mergeBtn.classList.add('hidden');
-  revealTransmission();
+  const lines=[...transmission.querySelectorAll('.line')];
+  lines.forEach((el,i)=>{
+    setTimeout(()=>el.classList.add('show'),300+i*600);
+  });
+  setTimeout(()=>home.classList.add('show'),400+lines.length*600);
 }
+
+function mergeSequence(){
+  mergeBtn.disabled=true;
+  mergeBtn.textContent='กำลังรวมพลัง...';
+
+  const labels=[
+    'กำลังรวมชิ้นส่วนแห่งการค้นพบ...',
+    'กำลังรวมชิ้นส่วนแห่งชีวิต...',
+    'กำลังรวมชิ้นส่วนแห่งพลังงาน...',
+    'กำลังรวมชิ้นส่วนแห่งสสาร...',
+    'กำลังรวมชิ้นส่วนแห่งจักรวาล...'
+  ];
+
+  fragments.forEach((frag,i)=>{
+    setTimeout(()=>{
+      statusText.textContent=labels[i];
+      frag.classList.add('absorb');
+
+      if(i===fragments.length-1){
+        setTimeout(()=>{
+          statusText.textContent='ชิ้นส่วนทั้ง 5 รวมเป็นหนึ่งแล้ว!';
+          stage.classList.add('charged');
+          wave.classList.add('go');
+          flash.classList.add('go');
+          localStorage.setItem('scienceAR_final','complete');
+
+          setTimeout(showTransmission,1500);
+        },850);
+      }
+    },i*820);
+  });
+}
+
+mergeBtn.addEventListener('click',mergeSequence);
+
+/*
+  ตั้งใจให้ Animation เล่นทุกครั้งที่เข้าหน้า final
+  แม้ผู้ใช้เคยทำภารกิจสำเร็จแล้ว เพื่อไม่ให้ข้ามฉากรวมชิ้นส่วน
+*/
 </script>
 </body>
 </html>
