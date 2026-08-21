@@ -40,6 +40,15 @@ p{line-height:1.55;color:#e3f2f8}
 .fragment{font-size:72px;filter:drop-shadow(0 0 24px #b96cff)}
 .progress{margin:12px auto;padding:10px 14px;border-radius:14px;background:#2a1643;border:1px solid #8a5db0;font-weight:800}
 #scanHint{display:none;position:fixed;z-index:20;left:50%;top:52%;transform:translate(-50%,-50%);width:min(68vw,420px);aspect-ratio:1;border:3px solid rgba(255,216,77,.85);border-radius:22px;pointer-events:none}
+
+#debugPanel{
+  position:fixed;left:10px;right:10px;bottom:max(10px,env(safe-area-inset-bottom));
+  z-index:60;background:#0b0614e8;color:#fff;border:1px solid #b96cff;border-radius:14px;
+  padding:9px 11px;font-size:12px;line-height:1.45;max-height:28vh;overflow:auto;
+  font-family:ui-monospace,SFMono-Regular,Menlo,monospace
+}
+#debugPanel b{color:#d98cff}
+.debug-ok{color:#a8ffb0}.debug-warn{color:#ffd36b}.debug-bad{color:#ff9c9c}
 </style>
 </head>
 
@@ -58,6 +67,13 @@ p{line-height:1.55;color:#e3f2f8}
 <div id="hud"><div id="status"><span class="ok">กำลังเปิดกล้อง…</span><br><span class="small">กรุณารอสักครู่</span></div></div>
 
 <div id="scanHint"></div>
+<div id="debugPanel">
+  <b>CHE 04 DEBUG</b><br>
+  <span id="dbgScene">scene: waiting</span><br>
+  <span id="dbgMindar">mindar: waiting</span><br>
+  <span id="dbgCamera">camera: waiting</span><br>
+  <span id="dbgTarget">target: waiting</span>
+</div>
 
 <div id="mission">
   <h3>⚗️ รวบรวมหลักฐาน 3 ข้อ</h3>
@@ -121,6 +137,34 @@ const success=document.querySelector('#success');
 const question=document.querySelector('#question');
 const feedback=document.querySelector('#feedback');
 const scanHint=document.querySelector('#scanHint');
+const dbgScene=document.querySelector('#dbgScene');
+const dbgMindar=document.querySelector('#dbgMindar');
+const dbgCamera=document.querySelector('#dbgCamera');
+const dbgTarget=document.querySelector('#dbgTarget');
+
+function dbg(el,msg,cls='debug-ok'){
+  if(!el) return;
+  el.className=cls;
+  el.textContent=msg;
+}
+
+function waitForMindAR(timeout=12000){
+  return new Promise((resolve,reject)=>{
+    const t0=Date.now();
+    const timer=setInterval(()=>{
+      const sys=scene && scene.systems && scene.systems['mindar-image-system'];
+      if(sys){
+        clearInterval(timer);
+        dbg(dbgMindar,'mindar: ready');
+        resolve(sys);
+      }else if(Date.now()-t0>timeout){
+        clearInterval(timer);
+        dbg(dbgMindar,'mindar: NOT READY','debug-bad');
+        reject(new Error('MindAR system not ready'));
+      }
+    },150);
+  });
+}
 let opened=new Set();
 
 function setStatus(main,sub=''){
@@ -152,6 +196,10 @@ async function waitForMindAR(){
 }
 
 document.querySelector('#startBtn').addEventListener('click',async()=>{
+  dbg(dbgScene,'scene: start pressed');
+  dbg(dbgMindar,'mindar: waiting','debug-warn');
+  dbg(dbgCamera,'camera: waiting','debug-warn');
+  dbg(dbgTarget,'target: scanning','debug-warn');
   const startBtn=document.querySelector('#startBtn');
   startBtn.disabled=true;
   start.style.display='none';
@@ -161,7 +209,9 @@ document.querySelector('#startBtn').addEventListener('click',async()=>{
   try{
     const sys=await waitForMindAR();
     await sys.start();
-    await forceVideo();
+    const videoReady = await forceVideo();
+    dbg(dbgCamera, videoReady ? 'camera: video ready' : 'camera: video not found',
+        videoReady ? 'debug-ok' : 'debug-bad');
     setStatus('กล้องพร้อมใช้งาน ✓','หันกล้องไปยังสัญลักษณ์ CHE 04 บนโปสเตอร์ฟิสิกส์');
   }catch(e){
     console.error(e);
@@ -174,11 +224,13 @@ document.querySelector('#startBtn').addEventListener('click',async()=>{
 });
 
 target.addEventListener('targetFound',()=>{
+  dbg(dbgTarget,'target: CHE 04 FOUND','debug-ok');
   scanHint.style.display='none';
   setStatus('✓ พบโปสเตอร์เคมี Mission 04','เริ่มรวบรวมหลักฐานเพื่อถอดรหัสสารปริศนา');
   mission.style.display='block';
 });
 target.addEventListener('targetLost',()=>{
+  dbg(dbgTarget,'target: lost','debug-warn');
   if(success.style.display!=='flex'){
     setStatus('หลุดจากสัญลักษณ์ CHE 04','หันกล้องกลับไปยัง Target CHE 04 บนโปสเตอร์เคมี');
     scanHint.style.display='block';
@@ -226,7 +278,11 @@ document.querySelectorAll('.answer').forEach(btn=>{
   });
 });
 
-scene.addEventListener('arReady',forceVideo);
+scene.addEventListener('loaded',()=>dbg(dbgScene,'scene: loaded','debug-ok'));
+scene.addEventListener('arReady',()=>{
+  dbg(dbgScene,'scene: arReady','debug-ok');
+  forceVideo();
+});
 window.addEventListener('resize',forceVideo);
 </script>
 </body>
