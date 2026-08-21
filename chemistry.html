@@ -17,22 +17,22 @@ a-scene,.a-canvas,canvas{position:fixed!important;inset:0!important;width:100vw!
 
 #start{position:fixed;inset:0;z-index:40;display:flex;align-items:center;justify-content:center;padding:20px;background:radial-gradient(circle at 50% 20%,#32104f,#10051f 68%)}
 .card{width:min(94vw,600px);padding:26px 22px;border-radius:24px;background:#180b2ff2;border:1px solid #b96cff;color:#fff;text-align:center;box-shadow:0 0 45px #a83cff2b}
-h1{font-size:clamp(34px,9vw,52px);margin:.2em 0} h2{color:#d98cff;margin:.3em 0}
+h1{font-size:clamp(34px,9vw,52px);margin:.2em 0} h2{color:#e18cff;margin:.3em 0}
 p{line-height:1.55;color:#e3f2f8}
-.btn{border:0;border-radius:999px;padding:13px 22px;font-size:17px;font-weight:900;background:#b96cff;color:#1a0f26;cursor:pointer;margin:5px}
+.btn{border:0;border-radius:999px;padding:13px 22px;font-size:17px;font-weight:900;background:#b96cff;color:#160c22;cursor:pointer;margin:5px}
 .btn.secondary{background:#2b1647;color:#fff;border:1px solid #b96cff}
 
 #hud{display:none;position:fixed;z-index:25;left:12px;right:12px;top:max(12px,env(safe-area-inset-top));pointer-events:none}
 #status{margin:auto;max-width:640px;background:#10051fdf;color:#fff;border:1px solid #b96cff;border-radius:18px;padding:11px 14px;text-align:center;backdrop-filter:blur(6px)}
-.ok{color:#d98cff;font-weight:800}.small{font-size:13px;opacity:.88}
+.ok{color:#e18cff;font-weight:800}.small{font-size:13px;opacity:.88}
 
 #mission{display:none;position:fixed;z-index:30;left:14px;right:14px;bottom:max(16px,env(safe-area-inset-bottom));margin:auto;max-width:680px;background:#160b29f2;color:#fff;border:1px solid #b96cff;border-radius:22px;padding:15px;backdrop-filter:blur(8px);max-height:58vh;overflow:auto}
-#mission h3{margin:0 0 6px;color:#d98cff}
+#mission h3{margin:0 0 6px;color:#e18cff}
 .clue{width:100%;text-align:left;padding:12px 13px;margin:7px 0;border-radius:14px;border:1px solid #7645a1;background:#2b1647;color:#fff;font-size:15px}
-.clue.done{background:#43245e;border-color:#d98cff}
+.clue.done{background:#43245e;border-color:#e18cff}
 #question{display:none;margin-top:12px;padding-top:10px;border-top:1px solid #694487}
 .answer{width:100%;text-align:left;padding:11px 12px;margin:5px 0;border-radius:12px;border:1px solid #7645a1;background:#2b1647;color:#fff;font-size:15px}
-.answer.correct{border-color:#d98cff;background:#4a285f}
+.answer.correct{border-color:#e18cff;background:#4a285f}
 .answer.wrong{border-color:#ff8c8c;background:#4b2020}
 #feedback{min-height:28px;margin-top:6px;font-weight:700}
 
@@ -40,15 +40,6 @@ p{line-height:1.55;color:#e3f2f8}
 .fragment{font-size:72px;filter:drop-shadow(0 0 24px #b96cff)}
 .progress{margin:12px auto;padding:10px 14px;border-radius:14px;background:#2a1643;border:1px solid #8a5db0;font-weight:800}
 #scanHint{display:none;position:fixed;z-index:20;left:50%;top:52%;transform:translate(-50%,-50%);width:min(68vw,420px);aspect-ratio:1;border:3px solid rgba(255,216,77,.85);border-radius:22px;pointer-events:none}
-
-#debugPanel{
-  position:fixed;left:10px;right:10px;bottom:max(10px,env(safe-area-inset-bottom));
-  z-index:60;background:#0b0614e8;color:#fff;border:1px solid #b96cff;border-radius:14px;
-  padding:9px 11px;font-size:12px;line-height:1.45;max-height:28vh;overflow:auto;
-  font-family:ui-monospace,SFMono-Regular,Menlo,monospace
-}
-#debugPanel b{color:#d98cff}
-.debug-ok{color:#a8ffb0}.debug-warn{color:#ffd36b}.debug-bad{color:#ff9c9c}
 </style>
 </head>
 
@@ -58,7 +49,7 @@ p{line-height:1.55;color:#e3f2f8}
     <div>⚗️ SCIENCE AR QUEST • MISSION 04</div>
     <h1>ภารกิจเคมี</h1>
     <h2>ถอดรหัสสารปริศนา ⚗️</h2>
-    <p>สแกนสัญลักษณ์ <b>CHE 04</b> แล้วรวบรวมหลักฐาน 3 ข้อ วิเคราะห์สมบัติและการเกิดปฏิกิริยา เพื่อถอดรหัสว่าสารปริศนาคือสารชนิดใด</p>
+    <p>สแกนสัญลักษณ์ <b>CHE 04</b> แล้วรวบรวมหลักฐาน 3 ข้อ วิเคราะห์สมบัติและการเกิดปฏิกิริยา เพื่อถอดรหัสว่าสารปริศนาเป็นสารชนิดใด</p>
     <button class="btn" id="startBtn">เริ่มภารกิจ</button>
     <button class="btn secondary" onclick="location.href='./mission-map.html'">ดูแผนที่ภารกิจ</button>
   </div>
@@ -67,13 +58,6 @@ p{line-height:1.55;color:#e3f2f8}
 <div id="hud"><div id="status"><span class="ok">กำลังเปิดกล้อง…</span><br><span class="small">กรุณารอสักครู่</span></div></div>
 
 <div id="scanHint"></div>
-<div id="debugPanel">
-  <b>CHE 04 DEBUG</b><br>
-  <span id="dbgScene">scene: waiting</span><br>
-  <span id="dbgMindar">mindar: waiting</span><br>
-  <span id="dbgCamera">camera: waiting</span><br>
-  <span id="dbgTarget">target: waiting</span>
-</div>
 
 <div id="mission">
   <h3>⚗️ รวบรวมหลักฐาน 3 ข้อ</h3>
@@ -86,17 +70,17 @@ p{line-height:1.55;color:#e3f2f8}
   <div id="question">
     <h3>🧠 วิเคราะห์และถอดรหัส</h3>
     <div>จากหลักฐานทั้งหมด สารปริศนานี้มีสมบัติสอดคล้องกับสารชนิดใดมากที่สุด?</div>
-    <button class="answer" data-a="acid">กรด — ให้ไฮโดรเจนไอออนในสารละลายและเปลี่ยนสีกระดาษลิตมัสตามสมบัติของกรด</button>
-    <button class="answer" data-a="base">เบส — ให้ไฮดรอกไซด์ไอออนในสารละลายและมีสมบัติเป็นด่าง</button>
-    <button class="answer" data-a="salt">เกลือ — เป็นสารประกอบไอออนิกที่เกิดจากปฏิกิริยาระหว่างกรดกับเบส</button>
-    <button class="answer" data-a="organic">สารอินทรีย์ — ต้องมีคาร์บอนเป็นองค์ประกอบหลักเสมอ</button>
+    <button class="answer" data-a="acid">กรด</button>
+    <button class="answer" data-a="base">เบส</button>
+    <button class="answer" data-a="salt">เกลือ</button>
+    <button class="answer" data-a="neutral">สารเป็นกลาง</button>
     <div id="feedback"></div>
   </div>
 </div>
 
 <div id="success">
   <div class="card">
-    <div class="fragment">⚡</div>
+    <div class="fragment">💜</div>
     <h1>ถอดรหัสสำเร็จ!</h1>
     <h2>ได้รับชิ้นส่วนแห่งสสาร</h2>
     <p><b>MATTER FRAGMENT</b></p>
@@ -137,34 +121,6 @@ const success=document.querySelector('#success');
 const question=document.querySelector('#question');
 const feedback=document.querySelector('#feedback');
 const scanHint=document.querySelector('#scanHint');
-const dbgScene=document.querySelector('#dbgScene');
-const dbgMindar=document.querySelector('#dbgMindar');
-const dbgCamera=document.querySelector('#dbgCamera');
-const dbgTarget=document.querySelector('#dbgTarget');
-
-function dbg(el,msg,cls='debug-ok'){
-  if(!el) return;
-  el.className=cls;
-  el.textContent=msg;
-}
-
-function waitForMindAR(timeout=12000){
-  return new Promise((resolve,reject)=>{
-    const t0=Date.now();
-    const timer=setInterval(()=>{
-      const sys=scene && scene.systems && scene.systems['mindar-image-system'];
-      if(sys){
-        clearInterval(timer);
-        dbg(dbgMindar,'mindar: ready');
-        resolve(sys);
-      }else if(Date.now()-t0>timeout){
-        clearInterval(timer);
-        dbg(dbgMindar,'mindar: NOT READY','debug-bad');
-        reject(new Error('MindAR system not ready'));
-      }
-    },150);
-  });
-}
 let opened=new Set();
 
 function setStatus(main,sub=''){
@@ -196,10 +152,6 @@ async function waitForMindAR(){
 }
 
 document.querySelector('#startBtn').addEventListener('click',async()=>{
-  dbg(dbgScene,'scene: start pressed');
-  dbg(dbgMindar,'mindar: waiting','debug-warn');
-  dbg(dbgCamera,'camera: waiting','debug-warn');
-  dbg(dbgTarget,'target: scanning','debug-warn');
   const startBtn=document.querySelector('#startBtn');
   startBtn.disabled=true;
   start.style.display='none';
@@ -209,10 +161,8 @@ document.querySelector('#startBtn').addEventListener('click',async()=>{
   try{
     const sys=await waitForMindAR();
     await sys.start();
-    const videoReady = await forceVideo();
-    dbg(dbgCamera, videoReady ? 'camera: video ready' : 'camera: video not found',
-        videoReady ? 'debug-ok' : 'debug-bad');
-    setStatus('กล้องพร้อมใช้งาน ✓','หันกล้องไปยังสัญลักษณ์ CHE 04 บนโปสเตอร์ฟิสิกส์');
+    await forceVideo();
+    setStatus('กล้องพร้อมใช้งาน ✓','หันกล้องไปยังสัญลักษณ์ CHE 04 บนโปสเตอร์เคมี');
   }catch(e){
     console.error(e);
     start.style.display='flex';
@@ -224,13 +174,11 @@ document.querySelector('#startBtn').addEventListener('click',async()=>{
 });
 
 target.addEventListener('targetFound',()=>{
-  dbg(dbgTarget,'target: CHE 04 FOUND','debug-ok');
   scanHint.style.display='none';
   setStatus('✓ พบโปสเตอร์เคมี Mission 04','เริ่มรวบรวมหลักฐานเพื่อถอดรหัสสารปริศนา');
   mission.style.display='block';
 });
 target.addEventListener('targetLost',()=>{
-  dbg(dbgTarget,'target: lost','debug-warn');
   if(success.style.display!=='flex'){
     setStatus('หลุดจากสัญลักษณ์ CHE 04','หันกล้องกลับไปยัง Target CHE 04 บนโปสเตอร์เคมี');
     scanHint.style.display='block';
@@ -239,8 +187,8 @@ target.addEventListener('targetLost',()=>{
 
 const clues={
   1:'🔎 หลักฐานที่ 1: สารละลายมีค่า pH ต่ำกว่า 7 และทำให้กระดาษลิตมัสสีน้ำเงินเปลี่ยนเป็นสีแดง',
-  2:'🔎 หลักฐานที่ 2: เมื่อทำปฏิกิริยากับโลหะบางชนิด พบว่ามีแก๊สเกิดขึ้น',
-  3:'🔎 หลักฐานที่ 3: เมื่อนำสารไปทำปฏิกิริยากับเบส จะเกิดเกลือและน้ำ'
+  2:'🔎 หลักฐานที่ 2: เมื่อทำปฏิกิริยากับโลหะบางชนิด มีฟองแก๊สเกิดขึ้น',
+  3:'🔎 หลักฐานที่ 3: เมื่อทำปฏิกิริยากับเบสในปริมาณเหมาะสม จะเกิดเกลือและน้ำ'
 };
 
 document.querySelectorAll('.clue').forEach(btn=>{
@@ -258,8 +206,8 @@ document.querySelectorAll('.answer').forEach(btn=>{
     document.querySelectorAll('.answer').forEach(b=>b.classList.remove('wrong','correct'));
     if(btn.dataset.a==='acid'){
       btn.classList.add('correct');
-      feedback.style.color='#d98cff';
-      feedback.textContent='✓ ถูกต้อง: หลักฐานทั้งค่า pH การเปลี่ยนสีของลิตมัส การเกิดแก๊สกับโลหะบางชนิด และการเกิดเกลือกับน้ำเมื่อทำปฏิกิริยากับเบส สอดคล้องกับสมบัติของกรด';
+      feedback.style.color='#e18cff';
+      feedback.textContent='✓ ถูกต้อง: ค่า pH ต่ำกว่า 7 การเปลี่ยนลิตมัสสีน้ำเงินเป็นสีแดง การเกิดแก๊สกับโลหะบางชนิด และการทำปฏิกิริยากับเบสจนเกิดเกลือกับน้ำ สอดคล้องกับสมบัติของกรด';
       localStorage.setItem('scienceAR_chemistry','complete');
 
       const keys=['science','biology','physics','chemistry','earth'];
@@ -278,11 +226,7 @@ document.querySelectorAll('.answer').forEach(btn=>{
   });
 });
 
-scene.addEventListener('loaded',()=>dbg(dbgScene,'scene: loaded','debug-ok'));
-scene.addEventListener('arReady',()=>{
-  dbg(dbgScene,'scene: arReady','debug-ok');
-  forceVideo();
-});
+scene.addEventListener('arReady',forceVideo);
 window.addEventListener('resize',forceVideo);
 </script>
 </body>
