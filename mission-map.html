@@ -15,6 +15,14 @@ body{margin:0;min-height:100vh;padding:18px;font-family:system-ui,-apple-system,
 .m.available{cursor:pointer}.m.done{border-color:#b7ff62;background:#173d2d}.m.soon{opacity:.58}.name{font-weight:900}.sub{font-size:13px;opacity:.8;margin-top:3px}.status{white-space:nowrap;font-weight:900}.done .status{color:#b7ff62}.available .status{color:#dfffc8}
 .final{margin-top:14px;background:#101d2b;border:1px solid #456580;border-radius:18px;padding:16px;text-align:center}.final.unlocked{background:#253b18;border-color:#b7ff62}
 .btn{border:0;border-radius:999px;padding:12px 18px;font-weight:900;background:#b7ff37;color:#09200d;margin:5px;text-decoration:none;display:inline-block}.btn.secondary{background:#173f35;color:#fff;border:1px solid #78d990}.btn:disabled{opacity:.35}.small{font-size:13px;opacity:.8}
+.eval-actions{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:10px}
+.codebox{margin:12px auto 0;max-width:460px;display:none}
+.codebox.show{display:block}
+.codebox input{width:100%;padding:13px 15px;border-radius:14px;border:1px solid #78d990;background:#0b2524;color:#fff;font-size:16px;text-align:center;outline:none}
+.codebox input:focus{border-color:#b7ff62;box-shadow:0 0 0 3px #b7ff6222}
+.msg{min-height:24px;margin-top:8px;font-weight:800}
+.success-note{display:none;margin-top:12px;padding:12px;border-radius:14px;background:#173d2d;border:1px solid #b7ff62;color:#eaffd5}
+.success-note.show{display:block}
 </style>
 </head>
 <body>
@@ -34,7 +42,23 @@ body{margin:0;min-height:100vh;padding:18px;font-family:system-ui,-apple-system,
   <div class="final" id="evaluation">
     <h2>📡 ภารกิจที่ 6: ส่งข้อมูลการสำรวจ</h2>
     <p id="evalText">จะปลดล็อกเมื่อรวบรวมชิ้นส่วนครบ 5/5</p>
-    <button class="btn" id="evalBtn" disabled>ทำแบบประเมินกิจกรรม</button>
+
+    <div class="eval-actions">
+      <button class="btn" id="evalBtn" disabled>ทำแบบประเมินกิจกรรม</button>
+      <button class="btn secondary" id="codeBtn" disabled>กรอกรหัสยืนยัน</button>
+    </div>
+
+    <div class="codebox" id="codeBox">
+      <input id="confirmCode" type="text" autocomplete="off"
+             placeholder="กรอกรหัสที่ได้รับหลังส่งแบบประเมิน">
+      <button class="btn" id="verifyBtn">ยืนยันรหัส</button>
+      <div class="msg" id="codeMsg"></div>
+    </div>
+
+    <div class="success-note" id="evalSuccess">
+      ✓ ยืนยันการทำแบบประเมินเรียบร้อยแล้ว<br>
+      <span class="small">พร้อมเข้าสู่ Final Mission ในขั้นตอนถัดไป</span>
+    </div>
   </div>
   <div style="text-align:center;margin-top:15px">
     <a class="btn secondary" href="./index.html">⌂ กลับหน้าหลัก</a>
@@ -65,16 +89,49 @@ function render(){
  document.querySelector('#fill').style.width=`${n*20}%`;
  const ev=document.querySelector('#evaluation'), btn=document.querySelector('#evalBtn');
  if(n===5){
-   ev.classList.add('unlocked'); btn.disabled=false;
+   ev.classList.add('unlocked'); btn.disabled=false; document.querySelector('#codeBtn').disabled=false;
    document.querySelector('#evalText').textContent='✓ รวบรวมครบแล้ว พร้อมทำแบบประเมินเพื่อปลดล็อก Final Mission';
    document.querySelector('#coreText').textContent='SCIENCE CORE ครบ 5/5';
  }else{
-   ev.classList.remove('unlocked'); btn.disabled=true;
+   ev.classList.remove('unlocked'); btn.disabled=true; document.querySelector('#codeBtn').disabled=true;
    document.querySelector('#evalText').textContent=`ต้องรวบรวมอีก ${5-n} ชิ้น เพื่อปลดล็อกแบบประเมิน`;
    document.querySelector('#coreText').textContent='รวบรวมชิ้นส่วนจากทั้ง 5 ภาควิชา';
  }
 }
-document.querySelector('#evalBtn').onclick=()=>alert('ขั้นถัดไปจะเชื่อมปุ่มนี้กับแบบประเมินจริงของกิจกรรม');
+const FORM_URL='https://forms.gle/9v6nyzrSagnp1K6K8';
+const CONFIRM_CODE='SCIENCE2569';
+
+const evalBtn=document.querySelector('#evalBtn');
+const codeBtn=document.querySelector('#codeBtn');
+const codeBox=document.querySelector('#codeBox');
+const confirmCode=document.querySelector('#confirmCode');
+const verifyBtn=document.querySelector('#verifyBtn');
+const codeMsg=document.querySelector('#codeMsg');
+const evalSuccess=document.querySelector('#evalSuccess');
+
+evalBtn.onclick=()=>window.open(FORM_URL,'_blank');
+
+codeBtn.onclick=()=>{
+  codeBox.classList.toggle('show');
+  if(codeBox.classList.contains('show')) confirmCode.focus();
+};
+
+verifyBtn.onclick=()=>{
+  const value=confirmCode.value.trim().toUpperCase();
+  if(value===CONFIRM_CODE){
+    localStorage.setItem('scienceAR_evaluation','complete');
+    codeMsg.style.color='#b7ff62';
+    codeMsg.textContent='✓ รหัสถูกต้อง';
+    evalSuccess.classList.add('show');
+  }else{
+    codeMsg.style.color='#ff9b9b';
+    codeMsg.textContent='รหัสไม่ถูกต้อง กรุณาตรวจสอบข้อความหลังส่งแบบประเมินอีกครั้ง';
+  }
+};
+
+if(localStorage.getItem('scienceAR_evaluation')==='complete'){
+  evalSuccess.classList.add('show');
+}
 document.querySelector('#reset').onclick=()=>{if(confirm('รีเซ็ตความคืบหน้าทั้งหมดสำหรับการทดสอบ?')){missions.forEach(m=>localStorage.removeItem(storageKey(m.key)));render();}};
 render();
 </script>
